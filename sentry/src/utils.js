@@ -1,5 +1,9 @@
-// import cookie from 'cookie'
-
+/**
+ * Assumes that user is logged in if the last login timestamp is not older than 24 hours
+ *
+ * @param {*} lastLogin  Empty or timestamp of last login
+ * @returns true or false
+ */
 export function isLoggedIn(lastLogin) {
   let today = new Date()
   let loginTime
@@ -7,10 +11,21 @@ export function isLoggedIn(lastLogin) {
   loginTime = Date.parse(lastLogin || '')
 
   const diff = today - loginTime
-  // console.log(diff > 0 && diff < 86400000 ? 'Logged In' : 'Not logged in')
   return diff >= 0 && diff < 86400000
 }
 
+/**
+ * Identifies which routes are allowed based on whether
+ * the user is logged in and redirects to allowed routes
+ * if user attempts to access a public route.
+ *
+ * login route is redirected to home if user is already logged in
+ *
+ * @param {object} routes    route configuration object
+ * @param {string} lastLogin Last login timestamp of user
+ * @param {string} route     Route user wants to go to
+ * @returns Allowed route for the user based on login status
+ */
 export function whereTo(routes, lastLogin, route) {
   const loggedIn = isLoggedIn(lastLogin)
   let location = route
@@ -20,36 +35,8 @@ export function whereTo(routes, lastLogin, route) {
     isPublic = route.startsWith(routes.public[i])
   }
 
-  if (loggedIn && route === routes.login) location = routes.home
-  if (!loggedIn && !isPublic) location = routes.login
+  if (loggedIn && route === routes.start) location = routes.home
+  if (!loggedIn && !isPublic) location = routes.start
 
   return location
 }
-
-export function redirect(routes, lastLogin, path, response = {}) {
-  const location = whereTo(routes, lastLogin, path)
-  console.log('hooks/load => location', path, '=>', location)
-  if (location != path) {
-    return { status: 302, headers: { location } }
-  }
-  return response
-}
-
-// export function redirectOnServer(routes, request, response) {
-//   const location = whereTo(routes, request.locals?.lastLogin, request.path)
-//   console.log('hooks => location', location, request.path)
-//   if (location != request.path) {
-//     return { status: 302, headers: { location } }
-//   }
-//   return response
-// }
-//
-// export function redirectOnClient(routes, path, session) {
-//   // const location = whereTo(routes, session, path)
-//   // console.log('load => location', path, location)
-//   // if (location != path) {
-//   //   return { status: 302, headers: { location } }
-//   // }
-//   // return {}
-//   redirectOnServer(routes, { locals: session, path }, {})
-// }

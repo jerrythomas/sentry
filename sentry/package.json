@@ -54,6 +54,7 @@
     "moment": "^2.29.1",
     "node-esm-loader": "^0.0.1-alpha",
     "svelte": "^3.38.3",
+    "svelte-preprocess": "^4.7.3",
     "uvu": "^0.5.1"
   },
   "dependencies": {

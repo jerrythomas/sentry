@@ -1,15 +1,15 @@
 import { suite } from 'uvu'
 import * as assert from 'uvu/assert'
-import { isLoggedIn, whereTo, redirect } from '../src/utils.js'
+import { isLoggedIn, whereTo } from '../src/utils.js'
 
 const UtilitySuite = suite('Sentry utility functions')
 
-UtilitySuite.before(async context => {
+UtilitySuite.before(async (context) => {
   const loginAt = new Date()
   loginAt.setHours(loginAt.getHours() - 1)
 
   context.routes = {
-    login: '/home',
+    start: '/home',
     public: ['/api', '/about', '/open'],
     home: '/',
   }
@@ -32,19 +32,19 @@ UtilitySuite('Should validate login using timestamp', () => {
   assert.not(isLoggedIn(loginTime.toISOString()))
 })
 
-UtilitySuite('Should allow all public routes', async context => {
+UtilitySuite('Should allow all public routes', async (context) => {
   const routes = ['/api', '/about', '/open', '/api/child', '/open/sub']
 
-  routes.forEach(route => {
+  routes.forEach((route) => {
     const location = whereTo(context.routes, {}, route)
     assert.equal(location, route)
   })
 })
 
-UtilitySuite('Should allow all public routes', async context => {
+UtilitySuite('Should allow all public routes', async (context) => {
   const routes = ['/api', '/about', '/open', '/api/child', '/open/sub']
 
-  routes.forEach(route => {
+  routes.forEach((route) => {
     const location = whereTo(context.routes, context.loggedInSession, route)
     assert.equal(location, route)
   })
@@ -52,83 +52,86 @@ UtilitySuite('Should allow all public routes', async context => {
 
 UtilitySuite(
   'Should re-route protected routes when not logged in',
-  async context => {
-    const routes = ['/', '/dashboard', '/private', '/protected']
+  async (context) => {
+    const routes = ['/', '/dashboard', '/private', '/protected', '/logout']
 
-    routes.forEach(route => {
+    routes.forEach((route) => {
       const location = whereTo(context.routes, null, route)
-      assert.equal(location, context.routes.login)
+      assert.equal(location, context.routes.start)
     })
   }
 )
 
-UtilitySuite('Should allow protected routes when logged in', async context => {
-  const routes = ['/', '/dashboard', '/private', '/protected']
+UtilitySuite(
+  'Should allow protected routes when logged in',
+  async (context) => {
+    const routes = ['/', '/dashboard', '/private', '/protected', '/logout']
 
-  routes.forEach(route => {
-    const location = whereTo(context.routes, context.lastLogin, route)
-    assert.equal(location, route)
-  })
-})
+    routes.forEach((route) => {
+      const location = whereTo(context.routes, context.lastLogin, route)
+      assert.equal(location, route)
+    })
+  }
+)
 
-UtilitySuite('Should redirect login when logged in', async context => {
+UtilitySuite('Should redirect login when logged in', async (context) => {
   const location = whereTo(
     context.routes,
     context.lastLogin,
-    context.routes.login
+    context.routes.start
   )
   assert.equal(location, context.routes.home)
 })
 
-UtilitySuite('Should handle redirects when logged out', async context => {
-  const headers = {}
-  const items = [
-    { path: '/', expected: '/home' },
-    { path: '/home', expected: '/home' },
-    { path: '/private', expected: '/home' },
-    { path: '/api', expected: '/api' },
-  ]
-  let template = { status: 302, headers: { location: '/home' } }
+// UtilitySuite('Should handle redirects when logged out', async context => {
+//   const headers = {}
+//   const items = [
+//     { path: '/', expected: '/home' },
+//     { path: '/home', expected: '/home' },
+//     { path: '/private', expected: '/home' },
+//     { path: '/api', expected: '/api' },
+//   ]
+//   let template = { status: 302, headers: { location: '/home' } }
 
-  for (const item of items) {
-    template.headers.location = item.expected
+//   for (const item of items) {
+//     template.headers.location = item.expected
 
-    // const request = { headers, path: item.path, locals: {} }
-    const response = { original: '?' }
-    const expected = item.expected != item.path ? template : response
+//     // const request = { headers, path: item.path, locals: {} }
+//     const response = { original: '?' }
+//     const expected = item.expected != item.path ? template : response
 
-    const result = redirect(context.routes, '', item.path, response)
-    // console.log('result', result, expected)
-    assert.equal(result, expected)
-  }
-})
+//     const result = redirect(context.routes, '', item.path, response)
+//     // console.log('result', result, expected)
+//     assert.equal(result, expected)
+//   }
+// })
 
-UtilitySuite('Should handle redirects when logged in', async context => {
-  // const headers = {
-  //   cookie: context.loggedInCookie,
-  // }
-  const items = [
-    { path: '/', expected: '/' },
-    { path: '/home', expected: '/' },
-    { path: '/private', expected: '/private' },
-    { path: '/api', expected: '/api' },
-  ]
-  let template = { status: 302, headers: { location: '/home' } }
+// UtilitySuite('Should handle redirects when logged in', async context => {
+//   // const headers = {
+//   //   cookie: context.loggedInCookie,
+//   // }
+//   const items = [
+//     { path: '/', expected: '/' },
+//     { path: '/home', expected: '/' },
+//     { path: '/private', expected: '/private' },
+//     { path: '/api', expected: '/api' },
+//   ]
+//   let template = { status: 302, headers: { location: '/home' } }
 
-  for (const item of items) {
-    // const request = { headers, path: item.path, locals: {} }
-    const response = { original: '?' }
-    template.headers.location = item.expected
-    const expected = item.expected != item.path ? template : response
-    const result = redirect(
-      context.routes,
-      context.lastLogin,
-      item.path,
-      response
-    )
+//   for (const item of items) {
+//     // const request = { headers, path: item.path, locals: {} }
+//     const response = { original: '?' }
+//     template.headers.location = item.expected
+//     const expected = item.expected != item.path ? template : response
+//     const result = redirect(
+//       context.routes,
+//       context.lastLogin,
+//       item.path,
+//       response
+//     )
 
-    assert.equal(result, expected)
-  }
-})
+//     assert.equal(result, expected)
+//   }
+// })
 
 UtilitySuite.run()

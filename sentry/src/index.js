@@ -1,6 +1,6 @@
 import Icon from './ui/Icon.svelte'
 import SentryAuth from './ui/SentryAuth.svelte'
 
-import { whereTo, redirect } from './utils'
+import { whereTo } from './utils'
 
-export { Icon, SentryAuth, whereTo, redirect }
+export { Icon, SentryAuth, whereTo }

@@ -1,7 +1,6 @@
 import { writable } from 'svelte/store'
 import { goto, invalidate } from '$app/navigation'
 import { initializeApp, getApps, getApp } from 'firebase/app'
-import { createEventDispatcher } from 'svelte'
 
 import * as pkg from 'firebase/auth'
 
@@ -19,8 +18,6 @@ import {
 
 const { signInWithPopup } = pkg
 
-const dispatch = createEventDispatcher()
-
 const authProviders = {
   apple: () => new OAuthProvider('apple.com'),
   facebook: () => new FacebookAuthProvider(),
@@ -36,16 +33,16 @@ function createSentry() {
 
   let app
   let auth
-  let home = '/'
-  let login = '/home'
-  let isLoggedIn = false
+  let homePage = '/'
+  let startPage = '/home'
+  let paused = false
 
   function init(config, routes) {
     reset()
     app = getApps().length == 0 ? initializeApp(config) : getApp()
     auth = getAuth(app)
-    home = routes.home
-    login = routes.login
+    homePage = routes.home
+    startPage = routes.start
   }
 
   function reset() {
@@ -53,28 +50,21 @@ function createSentry() {
   }
 
   function watch() {
-    onAuthStateChanged(auth, async user => {
-      if (user) {
-        set({ user: profile(user), token: user.accessToken })
-      }
-      await setCookie(user)
-      redirect(user ? home : login)
+    onAuthStateChanged(auth, async (user) => {
+      if (!paused) onChange({ user })
     })
   }
 
   function getLoginHandler(provider, scopes = [], params = []) {
     const authProvider = authProviders[provider]()
-    scopes.map(scope => authProvider.addScope(scope))
-    params.map(param => authProvider.setCustomParameters(param))
+    scopes.map((scope) => authProvider.addScope(scope))
+    params.map((param) => authProvider.setCustomParameters(param))
 
     const login = async () => {
+      paused = true
       const result = await signInWithPopup(auth, authProvider)
       if (result.user) {
-        const user = profile(result.user)
-        set({ user, token: result.user.accessToken })
-        await setCookie(user)
-        register(user)
-        redirect(home)
+        await onChange(result, true)
       }
     }
 
@@ -82,68 +72,61 @@ function createSentry() {
   }
 
   async function logout() {
-    console.log('sentry => logout')
-    await setCookie()
-    const result = await signOut(auth)
-    reset()
-    redirect(login)
+    paused = true
+    await signOut(auth)
+    await onChange()
   }
 
   function redirect(path) {
-    invalidate(path)
-    goto(path)
-  }
-
-  function profile(user) {
-    return {
-      name: user.displayName,
-      avatar: user.photoURL,
-      email: user.email,
-      emailVerified: user.emailVerified,
-      id: user.uid,
+    if (window.location.pathname != path) {
+      invalidate(path)
+      goto(path)
     }
   }
 
-  async function onChange(result, signUp = false) {
+  async function onChange(result = {}, refresh = false) {
     let user = {}
     let token = null
+    let register = null
 
     if (result.user) {
       user = {
-        name: user.displayName,
-        avatar: user.photoURL,
-        email: user.email,
-        emailVerified: user.emailVerified,
-        id: user.uid,
+        name: result.user.displayName,
+        avatar: result.user.photoURL,
+        email: result.user.email,
+        emailVerified: result.user.emailVerified,
+        id: result.user.uid,
       }
       token = result.user.accessToken
+
+      if (refresh) register = { ...user }
     }
 
-    set({ user, token })
+    set({ user, token, register })
+
     await setCookie(user)
-
-    if (signUp) register(user)
-  }
-
-  function register(user) {
-    console.log('sentry => register')
-    if (user != {}) dispatch('register', { user })
+    paused = false
+    redirect(result.user ? homePage : startPage)
   }
 
   async function setCookie(user) {
     const loggedInAt = new Date()
-    const api_result = await fetch('/api/setCookie', {
+    const lastLogin = Object.keys(user).includes('id')
+      ? loggedInAt.toISOString()
+      : ''
+    localStorage.setItem('lastLogin', lastLogin)
+
+    const result = await fetch('/api/setCookie', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        lastLogin: user ? loggedInAt.toISOString() : '',
-      }),
+      body: JSON.stringify({ lastLogin }),
     })
+    return result
   }
 
-  return { subscribe, init, getLoginHandler, logout, watch, register, remove }
+  return { subscribe, init, getLoginHandler, logout, watch }
 }
 
 export const sentry = createSentry()
