@@ -1,0 +1,62 @@
+{
+  "name": "@jerrythomas/sentry",
+  "version": "0.0.1",
+  "description": "Drop in authentication for SvelteKit apps using popular auth kits",
+  "type": "module",
+  "svelte": "src/index.js",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && mkdir dist && cp -r src/* dist",
+    "test": "uvu spec",
+    "coverage": "c8 --include=src uvu spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jerrythomas/sentry.git"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    "./.npmignore": "./.npmignore",
+    ".": {
+      "import": "./src/index.js"
+    },
+    "./firebase": {
+      "import": "./src/firebase.js"
+    },
+    "./utils": {
+      "import": "./src/utils.js"
+    }
+  },
+  "keywords": [
+    "svelte",
+    "auth",
+    "firebase",
+    "supabase",
+    "amplify",
+    "auth0",
+    "sentry",
+    "guard"
+  ],
+  "author": "Jerry Thomas <me@jerrythomas.name>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jerrythomas/sentry/issues"
+  },
+  "homepage": "https://github.com/jerrythomas/sentry#readme",
+  "devDependencies": {
+    "@firebase/app-types": "0.6.2",
+    "c8": "^7.7.3",
+    "esm": "^3.2.25",
+    "firebase": "^9.0.0-beta.5",
+    "jsdom": "^16.6.0",
+    "moment": "^2.29.1",
+    "node-esm-loader": "^0.0.1-alpha",
+    "svelte": "^3.38.3",
+    "uvu": "^0.5.1"
+  },
+  "dependencies": {
+    "cookie": "^0.4.1"
+  }
+}
