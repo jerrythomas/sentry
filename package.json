@@ -1,6 +1,6 @@
 {
   "name": "@jerrythomas/sentry",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "description": "Drop in authentication for SvelteKit apps using popular auth kits",
   "type": "module",
   "svelte": "src/index.js",
