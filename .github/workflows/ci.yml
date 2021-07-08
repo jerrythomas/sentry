@@ -1,4 +1,4 @@
-name: Run Tests
+name: Automated Test, Release & Publish
 
 on:
   push:
@@ -23,9 +23,9 @@ jobs:
     - name: Intall pnpm
       uses: pnpm/action-setup@v2
       with:
-        version: ${{ matrix.pnpm-version }}
-    
-    - run: ls -ltr
-    - run: pwd
-    - run: pnpm i 
-    - run: pnpm test
+        version: ${{ matrix.pnpm-version }}    
+    - name: Install dependencies
+      run: pnpm i
+    - name: Run tests
+      run: pnpm test
+      
