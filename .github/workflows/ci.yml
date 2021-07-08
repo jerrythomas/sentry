@@ -1,10 +1,10 @@
-name: Automated Test, Release & Publish
+name: Automated Test
 
 on:
   push:
-    branches: [ main, develop, next ]
+    branches: [ develop ]
   pull_request:
-    branches: [ main, develop, next ]
+    branches: [ develop ]
 
 jobs:
   sentry:

@@ -4,6 +4,8 @@ on:
     branches:
       - main
       - next
+      - beta
+      - alpha
 jobs:
   sentry:
     name: Release
@@ -30,6 +32,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          git config --global user.email "me@jerrythomas.name"
+          git config --global user.name "Jerry Thomas"
           npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
           pnpm release
 
