@@ -1,0 +1,67 @@
+{
+  "name": "@jerrythomas/sentry",
+  "version": "0.0.0-development",
+  "description": "Drop in authentication for SvelteKit apps using popular auth kits",
+  "type": "module",
+  "svelte": "src/index.js",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "uvu spec",
+    "coverage": "c8 --include=src uvu spec",
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jerrythomas/sentry.git"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    "./.npmignore": "./.npmignore",
+    "./global.css": "./global.css",
+    ".": {
+      "import": "./src/index.js"
+    },
+    "./firebase": {
+      "import": "./src/firebase.js"
+    },
+    "./utils": {
+      "import": "./src/utils.js"
+    },
+    "./shared": {
+      "import": "./src/shared.js"
+    }
+  },
+  "keywords": [
+    "svelte",
+    "auth",
+    "firebase",
+    "supabase",
+    "amplify",
+    "auth0",
+    "sentry",
+    "guard"
+  ],
+  "author": "Jerry Thomas <me@jerrythomas.name>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jerrythomas/sentry/issues"
+  },
+  "homepage": "https://github.com/jerrythomas/sentry#readme",
+  "devDependencies": {
+    "@firebase/app-types": "0.6.2",
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "@semantic-release/exec": "^5.0.0",
+    "@semantic-release/git": "^9.0.0",
+    "@semantic-release/release-notes-generator": "^9.0.3",
+    "c8": "^7.7.3",
+    "firebase": "^9.0.0-beta.5",
+    "semantic-release": "^17.4.4",
+    "svelte": "^3.38.3",
+    "svelte-preprocess": "^4.7.3",
+    "uvu": "^0.5.1",
+    "tailwindcss": "^2.2.4"
+  }
+}

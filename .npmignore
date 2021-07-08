@@ -1,0 +1,6 @@
+*.config.cjs
+*.yaml
+*.json
+*.md
+.prettierignore
+spec

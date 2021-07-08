@@ -1,0 +1,21 @@
+---
+pkgRoot: src
+
+branches:
+- main
+- next
+
+plugins:
+- "@semantic-release/commit-analyzer"
+- "@semantic-release/release-notes-generator"
+- "@semantic-release/git"
+- - "@semantic-release/exec"
+  # - prepareCmd: npx rjp package.json version nextRelease.versiong
+- - "@semantic-release/git"
+  - message: Release <%= nextRelease.version %> [skip ci]
+    assets:
+    - src/**/*.{js,svelte,css}
+    - package.json
+    - CHANGELOG.md
+    - README.md
+- "@semantic-release/changelog"
