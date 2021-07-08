@@ -10,7 +10,7 @@
   "scripts": {
     "test": "uvu spec",
     "coverage": "c8 --include=src uvu spec",
-    "release": "release-it minor --preRelease=beta"
+    "release": "release-it --preRelease=beta --ci"
   },
   "repository": {
     "type": "git",

@@ -29,10 +29,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpx semantic-release
-      - name: Publish
-        run: |
-          npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-          npm publish --ignore-scripts
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm release
+      # - name: Publish
+      #   run: |
+      #     npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+      #     npm publish --ignore-scripts
+      #   env:
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
