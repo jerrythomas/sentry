@@ -11,7 +11,7 @@
     "test": "uvu spec",
     "coverage": "c8 --include=src uvu spec",
     "semantic-release": "semantic-release",
-    "release": "release-it"
+    "release": "release-it major --preRelease=beta"
   },
   "repository": {
     "type": "git",
@@ -52,6 +52,7 @@
   "homepage": "https://github.com/jerrythomas/sentry#readme",
   "devDependencies": {
     "@firebase/app-types": "0.6.2",
+    "@release-it/conventional-changelog": "^3.0.1",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/commit-analyzer": "^8.0.1",
     "@semantic-release/exec": "^5.0.0",
