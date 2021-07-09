@@ -1,7 +1,7 @@
 export const routes = {
   home: '/',
   start: '/login',
-  public: ['/api', '/about', '/terms', '/privacy', '/logout'],
+  public: ['/api', '/about', '/terms', '/privacy'],
 }
 
 const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID

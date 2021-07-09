@@ -24,6 +24,7 @@
 
   export let activePage
   $: console.log(activePage)
+
   onMount(async () => {
     sentry.init(config, routes)
     sentry.watch()

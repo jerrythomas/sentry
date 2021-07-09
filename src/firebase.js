@@ -1,5 +1,7 @@
 import { writable } from 'svelte/store'
+import { goto, invalidate } from '$app/navigation'
 import { initializeApp, getApps, getApp } from 'firebase/app'
+import { setCookie } from './utils'
 
 import * as pkg from 'firebase/auth'
 
@@ -16,7 +18,6 @@ import {
 } from 'firebase/auth'
 
 const { signInWithPopup } = pkg
-import { setCookie, redirect } from './shared'
 
 const authProviders = {
   apple: () => new OAuthProvider('apple.com'),
@@ -81,6 +82,7 @@ function createSentry() {
     let user = {}
     let token = null
     let register = null
+    let loggedIn = false
 
     if (result.user) {
       user = {
@@ -91,15 +93,22 @@ function createSentry() {
         id: result.user.uid,
       }
       token = result.user.accessToken
+      loggedIn = true
 
       if (refresh) register = { ...user }
     }
 
-    set({ user, token, register })
-
     await setCookie(user)
+    set({ user, loggedIn, token, register })
     paused = false
     redirect(result.user ? homePage : startPage)
+  }
+
+  function redirect(path) {
+    if (window.location.pathname != path) {
+      invalidate(path)
+      goto(path)
+    }
   }
 
   return { subscribe, init, getLoginHandler, logout, watch }
