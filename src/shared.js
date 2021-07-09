@@ -1,3 +1,5 @@
+import { goto, invalidate } from '$app/navigation'
+
 export async function setCookie(user) {
   const loggedInAt = new Date()
   const lastLogin = Object.keys(user).includes('id')
@@ -13,4 +15,11 @@ export async function setCookie(user) {
     body: JSON.stringify({ lastLogin }),
   })
   return result
+}
+
+export function redirect(path) {
+  if (window.location.pathname != path) {
+    invalidate(path)
+    goto(path)
+  }
 }

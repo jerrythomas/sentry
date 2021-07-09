@@ -1,8 +1,20 @@
 # README
 
+A working sample that can be used as a starter for your apps.
+
+## Getting started
+
+Get started quickly using [degit](https://github.com/Rich-Harris/degit).
+
+```bash
+degit jerrythomas/sentry/examples/firebase my-app
+cd my-app
+pnpm i --save-dev @jerrythomas/sentry@beta
+```
+
 ## Configure
 
-Set the following environment variables based on the configuration obtained here.
+Set the following environment variables based on the configuration obtained from [Firebase Console](https://console.firebase.google.com).
 
 ```bash
 VITE_FIREBASE_API_KEY=

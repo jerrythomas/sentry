@@ -2,7 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@firebase/app-types': 0.6.2
-  '@jerrythomas/sentry': ^0.1.0-beta.3
+  '@jerrythomas/sentry': link:../..
   '@sveltejs/kit': next
   autoprefixer: ^10.2.6
   cookie: ^0.4.1
@@ -25,8 +25,8 @@ dependencies:
 
 devDependencies:
   '@firebase/app-types': 0.6.2
-  '@jerrythomas/sentry': 0.1.0-beta.3
-  '@sveltejs/kit': 1.0.0-next.122_rollup@2.52.8+svelte@3.38.3
+  '@jerrythomas/sentry': 0.1.0-beta.5
+  '@sveltejs/kit': 1.0.0-next.123_rollup@2.52.8+svelte@3.38.3
   autoprefixer: 10.2.6_postcss@8.3.5
   cssnano: 5.0.6_postcss@8.3.5
   eslint: 7.29.0
@@ -521,8 +521,8 @@ packages:
       protobufjs: 6.11.2
     dev: true
 
-  /@jerrythomas/sentry/0.1.0-beta.3:
-    resolution: {integrity: sha512-VaCJkCE+FIRDs9cdT/DahZDIF669ya5+k55JXORyM+BI32kBaP+dnVqSMmhSPJtAzSSXhTDCbhxdEkvCUbwxkA==}
+  /@jerrythomas/sentry/0.1.0-beta.5:
+    resolution: {integrity: sha512-ZCsiwnaZ6jb3Y/D74JoFIUl7D8xVGxprVKflmfJtqh+5jlUywQX12K536m7oGFUdW5EGxAIpi0o2ukLsjM7wqQ==}
     dev: true
 
   /@nodelib/fs.scandir/2.1.5:
@@ -600,8 +600,8 @@ packages:
       rollup: 2.52.8
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.122_rollup@2.52.8+svelte@3.38.3:
-    resolution: {integrity: sha512-HwyYcbLMN2q7HuO561CD01RZ8ZPEdZgwdTKmyvMYrTZehH9WPJI2VF+7bI84mNxWiQiLnc2gg+Y0klVHXJO+Yw==}
+  /@sveltejs/kit/1.0.0-next.123_rollup@2.52.8+svelte@3.38.3:
+    resolution: {integrity: sha512-C9UZ5yYdU94hjpmwTPmDpCWphPc9RsSR4TxV67JM+SqDrSCMKx65JI3+goQQzY2ZHARUGukoc1+ijaRxW48AWQ==}
     engines: {node: ^12.20 || >=14.13}
     hasBin: true
     peerDependencies:

@@ -1,6 +1,5 @@
 import { writable } from 'svelte/store'
 import { initializeApp, getApps, getApp } from 'firebase/app'
-import { goto, invalidate } from '$app/navigation'
 
 import * as pkg from 'firebase/auth'
 
@@ -17,7 +16,7 @@ import {
 } from 'firebase/auth'
 
 const { signInWithPopup } = pkg
-import { setCookie } from './shared'
+import { setCookie, redirect } from './shared'
 
 const authProviders = {
   apple: () => new OAuthProvider('apple.com'),
@@ -27,13 +26,6 @@ const authProviders = {
   twitter: () => new TwitterAuthProvider(),
   microsoft: () => new OAuthProvider('microsoft'),
   yahoo: () => new OAuthProvider('yahoo'),
-}
-
-function redirect(path) {
-  if (window.location.pathname != path) {
-    invalidate(path)
-    goto(path)
-  }
 }
 
 function createSentry() {
