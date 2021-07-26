@@ -6,6 +6,7 @@ import Apple from './Apple.svelte'
 import Anonymous from './Anonymous.svelte'
 import Phone from './Phone.svelte'
 import Mail from './Mail.svelte'
+import Microsoft from './Microsoft.svelte'
 
 export const icons = {
   google: Google,
@@ -14,6 +15,7 @@ export const icons = {
   twitter: Twitter,
   apple: Apple,
   anonymous: Anonymous,
+  microsoft: Microsoft,
   phone: Phone,
-  mail: Mail
+  mail: Mail,
 }

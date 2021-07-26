@@ -25,7 +25,7 @@ const authProviders = {
   github: () => new GithubAuthProvider(),
   google: () => new GoogleAuthProvider(),
   twitter: () => new TwitterAuthProvider(),
-  microsoft: () => new OAuthProvider('microsoft'),
+  microsoft: () => new OAuthProvider('microsoft.com'),
   yahoo: () => new OAuthProvider('yahoo'),
 }
 
@@ -90,6 +90,7 @@ function createSentry() {
         avatar: result.user.photoURL,
         email: result.user.email,
         emailVerified: result.user.emailVerified,
+        domain: result.user.email.split('@')[1],
         id: result.user.uid,
       }
       token = result.user.accessToken
