@@ -13,7 +13,7 @@ This is an attempt to make adding authentication to SvelteKit apps as simple as 
 ## Features
 
 - [x] Configuration driven
-- [ ] Secrets using environment variables
+- [x] Secrets using environment variables
 - [ ] Emulator tests where available
 - [x] Route protection
   - [x] Public pages
@@ -29,7 +29,7 @@ This is an attempt to make adding authentication to SvelteKit apps as simple as 
   - [x] Google
   - [ ] Password
   - [ ] Github
-  - [ ] Microsoft
+  - [x] Microsoft
   - [ ] Twitter
   - [ ] Facebook
 
@@ -57,7 +57,7 @@ Take a look at the following files in the sample to understand how it works.
 
 ### Tailwind
 
-This library uses tailwind and the components will not render properly if the tailwind does not include the requires css. Ensure that the sentry library is included in the purge array of `tailwind.config.cjs`
+This library uses tailwind and the components will not render properly if the tailwind does not include the requires css classes. Ensure that the sentry library is included in the purge array of `tailwind.config.cjs`
 
 ```js
 purge: [
@@ -88,13 +88,3 @@ This library consists of the following components.
 ## License
 
 MIT © [Jerry Thomas](https://jerrythomas.name)
-
-Request Id: 1aebc3bd-0906-42eb-bf78-1aad55d6b000
-Correlation Id: 5765c272-e98e-472c-8c7b-bcd4a08c6f59
-Timestamp: 2021-07-17T08:35:22Z
-Message: AADSTS700016: Application with identifier '695bb27b-dd1f-445a-a705-dc2a5acdc10a' was not found in the directory '445247d8-5a36-4602-9bec-f75e2109b6a1'. This can happen if the application has not been installed by the administrator of the tenant or consented to by any user in the tenant. You may have sent your authentication request to the wrong tenant.
-
-Request Id: c87dc3f2-42d9-48d3-972c-62989a514800
-Correlation Id: b1e08f7e-7fd9-4c86-a81c-f9483c9c46d7
-Timestamp: 2021-07-17T08:36:52Z
-Message: AADSTS700016: Application with identifier '695bb27b-dd1f-445a-a705-dc2a5acdc10a' was not found in the directory '0b70a129-42b3-4c57-98b7-efdbfb2593c5'. This can happen if the application has not been installed by the administrator of the tenant or consented to by any user in the tenant. You may have sent your authentication request to the wrong tenant.

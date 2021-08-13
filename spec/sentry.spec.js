@@ -1,6 +1,7 @@
 import { suite } from 'uvu'
 import * as assert from 'uvu/assert'
-import { isLoggedIn, whereTo } from '../src/utils.js'
+import { isLoggedIn, whereTo, setCookie } from '../src/utils.js'
+import { mockServer } from './server.mock.js'
 
 const UtilitySuite = suite('Sentry utility functions')
 
@@ -16,6 +17,19 @@ UtilitySuite.before(async (context) => {
   context.loggedInCookie = `lastLogin=${loginAt.toISOString()};`
   context.loggedInSession = { lastLogin: loginAt.toISOString() }
   context.lastLogin = loginAt.toISOString()
+
+  context.store = {}
+  global.localStorage = {
+    getItem: () => {
+      return context.store[key]
+    },
+    setItem: (key, value) => {
+      context.store[key] = value + ''
+    },
+    clear: () => {
+      context.store = {}
+    },
+  }
 })
 
 UtilitySuite('Should validate login using timestamp', () => {
@@ -133,5 +147,14 @@ UtilitySuite('Should redirect login when logged in', async (context) => {
 //     assert.equal(result, expected)
 //   }
 // })
+
+// UtilitySuite(
+//   'Should send logged timestamp to cookie endpoint',
+//   async (context) => {
+//     mockServer()
+//     let result = await setCookie({})
+//     assert.equal(result, { lastLogin: '' })
+//   }
+// )
 
 UtilitySuite.run()
