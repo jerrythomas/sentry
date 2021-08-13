@@ -50,7 +50,7 @@ function createSentry() {
     set({ user: {}, token: null })
   }
 
-  function watch() {
+  async function watch() {
     onAuthStateChanged(auth, async (user) => {
       if (!paused) onChange({ user })
     })
@@ -68,7 +68,6 @@ function createSentry() {
         await onChange(result, true)
       }
     }
-
     return login
   }
 
@@ -78,7 +77,7 @@ function createSentry() {
     await onChange()
   }
 
-  async function onChange(result = {}, refresh = false) {
+  async function onChange(result, refresh = false) {
     let user = {}
     let token = null
     let register = null
@@ -93,7 +92,8 @@ function createSentry() {
         domain: result.user.email.split('@')[1],
         id: result.user.uid,
       }
-      token = result.user.accessToken
+      const credential = OAuthProvider.credentialFromResult(result)
+      if (credential) token = credential.accessToken
       loggedIn = true
 
       if (refresh) register = { ...user }

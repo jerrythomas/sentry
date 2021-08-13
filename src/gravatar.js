@@ -27,3 +27,25 @@ export async function gravatar(email, size = 128) {
 
   return user
 }
+
+function toDataURL(blob) {
+  const value = new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
+  return value
+}
+
+function profilePhoto(token) {
+  let result = await fetch('https://graph.microsoft.com/v1.0/me/photo/$value', {
+    method: 'post',
+    headers: new Headers({
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }),
+    body: '',
+  })
+  return toDataURL(result)
+}

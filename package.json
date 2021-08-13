@@ -1,6 +1,6 @@
 {
   "name": "@jerrythomas/sentry",
-  "version": "0.1.0-beta.7",
+  "version": "1.0.0",
   "description": "Drop in authentication for SvelteKit apps using popular auth kits",
   "type": "module",
   "svelte": "src/index.js",
@@ -10,7 +10,7 @@
   "scripts": {
     "test": "uvu spec",
     "coverage": "c8 --include=src uvu spec",
-    "release": "release-it --preRelease=beta --ci"
+    "release": "release-it --ci"
   },
   "repository": {
     "type": "git",
@@ -59,7 +59,6 @@
     "firebase": "^9.0.0-beta.5",
     "postcss": "^8.3.5",
     "release-it": "^14.10.0",
-    "semantic-release": "^17.4.4",
     "svelte": "^3.38.3",
     "svelte-preprocess": "^4.7.3",
     "tailwindcss": "^2.2.4",
