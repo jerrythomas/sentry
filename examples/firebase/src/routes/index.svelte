@@ -1,6 +1,8 @@
 <script>
   import { sentry } from '@jerrythomas/sentry/firebase'
   $: user = $sentry.user
+
+  $: console.log($sentry.token)
 </script>
 
 <section
