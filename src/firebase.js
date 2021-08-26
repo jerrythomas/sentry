@@ -3,10 +3,8 @@ import { goto, invalidate } from '$app/navigation'
 import { initializeApp, getApps, getApp } from 'firebase/app'
 import { setCookie } from './utils'
 
-import * as pkg from 'firebase/auth'
-
 import {
-  // signInWithPopup,
+  signInWithPopup,
   signOut,
   getAuth,
   onAuthStateChanged,
@@ -16,8 +14,6 @@ import {
   FacebookAuthProvider,
   OAuthProvider,
 } from 'firebase/auth'
-
-const { signInWithPopup } = pkg
 
 const authProviders = {
   apple: () => new OAuthProvider('apple.com'),
@@ -83,7 +79,7 @@ function createSentry() {
     let register = null
     let loggedIn = false
 
-    if (result.user) {
+    if (result?.user) {
       user = {
         name: result.user.displayName,
         avatar: result.user.photoURL,
@@ -102,7 +98,7 @@ function createSentry() {
     await setCookie(user)
     set({ user, loggedIn, token, register })
     paused = false
-    redirect(result.user ? homePage : startPage)
+    redirect(user.id ? homePage : startPage)
   }
 
   function redirect(path) {
