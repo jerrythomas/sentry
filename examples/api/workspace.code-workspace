@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../../Learn/svelte-bar-chart-race"
+		},
+		{
+			"path": "../../../Charts"
+		}
+	],
+	"settings": {}
+}

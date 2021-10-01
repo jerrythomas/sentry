@@ -40,10 +40,9 @@ function toDataURL(blob) {
 
 function profilePhoto(token) {
   let result = await fetch('https://graph.microsoft.com/v1.0/me/photo/$value', {
-    method: 'post',
+    method: 'get',
     headers: new Headers({
       Authorization: 'Bearer ' + token,
-      'Content-Type': 'application/x-www-form-urlencoded',
     }),
     body: '',
   })
