@@ -6,10 +6,10 @@ import ChevronRightIcon from './ChevronRight.svelte'
 import LogoutIcon from './Logout.svelte'
 
 export const icons = {
-  BookMark: BookMarkIcon,
-  Categories: CategoriesIcon,
-  ChevronRight: ChevronRightIcon,
-  Home: HomeIcon,
-  Tag: TagIcon,
-  Logout: LogoutIcon,
+	BookMark: BookMarkIcon,
+	Categories: CategoriesIcon,
+	ChevronRight: ChevronRightIcon,
+	Home: HomeIcon,
+	Tag: TagIcon,
+	Logout: LogoutIcon
 }

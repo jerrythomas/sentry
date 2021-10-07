@@ -1,100 +1,100 @@
 import { suite } from 'uvu'
 import * as assert from 'uvu/assert'
-import { isLoggedIn, whereTo, setCookie } from '../src/utils.js'
-import { mockServer } from './server.mock.js'
+import { isLoggedIn, whereTo } from '../src/utils.js'
+// import { mockServer } from './server.mock.js'
 
 const UtilitySuite = suite('Sentry utility functions')
 
 UtilitySuite.before(async (context) => {
-  const loginAt = new Date()
-  loginAt.setHours(loginAt.getHours() - 1)
+	const loginAt = new Date()
+	loginAt.setHours(loginAt.getHours() - 1)
 
-  context.routes = {
-    start: '/home',
-    public: ['/api', '/about', '/open'],
-    home: '/',
-  }
-  context.loggedInCookie = `lastLogin=${loginAt.toISOString()};`
-  context.loggedInSession = { lastLogin: loginAt.toISOString() }
-  context.lastLogin = loginAt.toISOString()
+	context.routes = {
+		start: '/home',
+		public: ['/api', '/about', '/open'],
+		home: '/'
+	}
+	context.loggedInCookie = `lastLogin=${loginAt.toISOString()};`
+	context.loggedInSession = { lastLogin: loginAt.toISOString() }
+	context.lastLogin = loginAt.toISOString()
 
-  context.store = {}
-  global.localStorage = {
-    getItem: () => {
-      return context.store[key]
-    },
-    setItem: (key, value) => {
-      context.store[key] = value + ''
-    },
-    clear: () => {
-      context.store = {}
-    },
-  }
+	context.store = {}
+	global.localStorage = {
+		getItem: (key) => {
+			return context.store[key]
+		},
+		setItem: (key, value) => {
+			context.store[key] = value + ''
+		},
+		clear: () => {
+			context.store = {}
+		}
+	}
 })
 
 UtilitySuite('Should validate login using timestamp', () => {
-  let loginTime = new Date()
+	let loginTime = new Date()
 
-  assert.not(isLoggedIn())
-  assert.not(isLoggedIn(null))
-  assert.ok(isLoggedIn(loginTime.toISOString()))
+	assert.not(isLoggedIn())
+	assert.not(isLoggedIn(null))
+	assert.ok(isLoggedIn(loginTime.toISOString()))
 
-  loginTime.setHours(loginTime.getHours() - 23)
-  assert.ok(isLoggedIn(loginTime.toISOString()))
+	loginTime.setHours(loginTime.getHours() - 23)
+	assert.ok(isLoggedIn(loginTime.toISOString()))
 
-  loginTime.setHours(loginTime.getHours() + 24)
-  assert.not(isLoggedIn(loginTime.toISOString()))
+	loginTime.setHours(loginTime.getHours() + 24)
+	assert.not(isLoggedIn(loginTime.toISOString()))
 })
 
 UtilitySuite('Should allow all public routes', async (context) => {
-  const routes = ['/api', '/about', '/open', '/api/child', '/open/sub']
+	const routes = ['/api', '/about', '/open', '/api/child', '/open/sub']
 
-  routes.forEach((route) => {
-    const location = whereTo(context.routes, {}, route)
-    assert.equal(location, route)
-  })
+	routes.forEach((route) => {
+		const location = whereTo(context.routes, {}, route)
+		assert.equal(location, route)
+	})
 })
 
 UtilitySuite('Should allow all public routes', async (context) => {
-  const routes = ['/api', '/about', '/open', '/api/child', '/open/sub']
+	const routes = ['/api', '/about', '/open', '/api/child', '/open/sub']
 
-  routes.forEach((route) => {
-    const location = whereTo(context.routes, context.loggedInSession, route)
-    assert.equal(location, route)
-  })
+	routes.forEach((route) => {
+		const location = whereTo(context.routes, context.loggedInSession, route)
+		assert.equal(location, route)
+	})
 })
 
 UtilitySuite(
-  'Should re-route protected routes when not logged in',
-  async (context) => {
-    const routes = ['/', '/dashboard', '/private', '/protected', '/logout']
+	'Should re-route protected routes when not logged in',
+	async (context) => {
+		const routes = ['/', '/dashboard', '/private', '/protected', '/logout']
 
-    routes.forEach((route) => {
-      const location = whereTo(context.routes, null, route)
-      assert.equal(location, context.routes.start)
-    })
-  }
+		routes.forEach((route) => {
+			const location = whereTo(context.routes, null, route)
+			assert.equal(location, context.routes.start)
+		})
+	}
 )
 
 UtilitySuite(
-  'Should allow protected routes when logged in',
-  async (context) => {
-    const routes = ['/', '/dashboard', '/private', '/protected', '/logout']
+	'Should allow protected routes when logged in',
+	async (context) => {
+		const routes = ['/', '/dashboard', '/private', '/protected', '/logout']
 
-    routes.forEach((route) => {
-      const location = whereTo(context.routes, context.lastLogin, route)
-      assert.equal(location, route)
-    })
-  }
+		routes.forEach((route) => {
+			const location = whereTo(context.routes, context.lastLogin, route)
+			assert.equal(location, route)
+		})
+	}
 )
 
 UtilitySuite('Should redirect login when logged in', async (context) => {
-  const location = whereTo(
-    context.routes,
-    context.lastLogin,
-    context.routes.start
-  )
-  assert.equal(location, context.routes.home)
+	const location = whereTo(
+		context.routes,
+		context.lastLogin,
+		context.routes.start
+	)
+	assert.equal(location, context.routes.home)
 })
 
 // UtilitySuite('Should handle redirects when logged out', async context => {

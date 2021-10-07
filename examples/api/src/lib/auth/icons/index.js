@@ -9,13 +9,13 @@ import Mail from './Mail.svelte'
 import Microsoft from './Microsoft.svelte'
 
 export const icons = {
-  google: Google,
-  github: Github,
-  facebook: Facebook,
-  twitter: Twitter,
-  apple: Apple,
-  anonymous: Anonymous,
-  microsoft: Microsoft,
-  phone: Phone,
-  mail: Mail,
+	google: Google,
+	github: Github,
+	facebook: Facebook,
+	twitter: Twitter,
+	apple: Apple,
+	anonymous: Anonymous,
+	microsoft: Microsoft,
+	phone: Phone,
+	mail: Mail
 }
