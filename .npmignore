@@ -3,4 +3,7 @@
 *.json
 *.md
 .prettierignore
-spec
+.github/
+spec/
+examples/
+notes/

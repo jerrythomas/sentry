@@ -1,22 +1,36 @@
 <script>
-  import Icon from './Icon.svelte'
-  import { icons } from '../icons'
-  import { sentry } from '../firebase'
+	import Icon from './Icon.svelte'
+	import { icons } from '../icons'
+	import { sentry } from '../firebase'
 
-  export let provider
-  export let label
-  export let scopes = []
-  export let params = []
+	export let provider
+	export let label
+	export let scopes = []
+	export let params = []
 
-  const signIn = sentry.getLoginHandler(provider, scopes, params)
+	const signIn = sentry.getLoginHandler(provider, scopes, params)
 
-  $: title = label.toLowerCase() === provider ? 'Continue with ' + label : label
+	$: title = label.toLowerCase() === provider ? 'Continue with ' + label : label
 </script>
 
-<button
-  class="flex flex-row border rounded px-4 py-2 space-x-4 {provider}"
-  on:click={signIn}
->
-  <Icon {title} icon={icons[provider]} />
-  <p class="flex flex-grow">{title}</p>
+<button class={provider} on:click={signIn}>
+	<Icon {title} icon={icons[provider]} />
+	<p>{title}</p>
 </button>
+
+<style lang="postcss">
+	button {
+		display: flex;
+		flex-direction: row;
+		border: 1px solid;
+		border-radius: 0.25rem;
+		padding: 0.5rem 1rem;
+		font-size: 1rem;
+		vertical-align: middle;
+	}
+	button p {
+		display: flex;
+		flex-grow: 1;
+		margin-left: 1rem;
+	}
+</style>
