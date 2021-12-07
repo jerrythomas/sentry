@@ -44,19 +44,19 @@ export function whereTo(routes, lastLogin, route) {
 	return location
 }
 
-export async function setCookie(user) {
+export async function setCookie(user, url = '/api/session') {
 	const loggedInAt = new Date()
-	const lastLogin = Object.keys(user).includes('id')
+	const lastLogin = Object.keys(user).includes('email')
 		? loggedInAt.toISOString()
 		: ''
 	localStorage.setItem('lastLogin', lastLogin)
 
-	const result = await fetch('/api/setCookie', {
+	const result = await fetch(url, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ lastLogin })
+		body: JSON.stringify({ lastLogin, ...user })
 	})
 	return result
 }

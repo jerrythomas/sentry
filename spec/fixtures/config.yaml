@@ -1,0 +1,81 @@
+---
+- options:
+    home: /home
+    login: /signIn
+    logout: /signOut
+  expected:
+    home: /home
+    login: /signIn
+    logout: /signOut
+    byRole:
+      public:
+      - /auth/session
+      - /auth/signin
+      - /signIn
+      authorized:
+      - /home
+
+- options:
+    home: /home
+    login: /signIn
+    logout: /signOut
+    byRole:
+      public:
+      - /
+      authorized:
+      - /home
+      - /me
+  expected:
+    home: /home
+    login: /signIn
+    logout: /signOut
+    byRole:
+      public:
+      - /
+      - /auth/session
+      - /auth/signin
+      - /signIn
+      authorized:
+      - /home
+      - /me
+
+- options:
+    login: /signIn
+    logout: /signOut
+    byRole:
+      public:
+      - /
+  expected:
+    home: /
+    login: /signIn
+    logout: /signOut
+    byRole:
+      public:
+      - /
+      - /auth/session
+      - /auth/signin
+      - /signIn
+      authorized:
+      - /
+
+- options:
+    home: /
+    login: /signIn
+    logout: /signOut
+    byRole:
+      public:
+      - /
+      - /home
+  expected:
+    home: /
+    login: /signIn
+    logout: /signOut
+    byRole:
+      public:
+      - /
+      - /auth/session
+      - /auth/signin
+      - /home
+      - /signIn
+      authorized:
+      - /

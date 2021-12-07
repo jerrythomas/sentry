@@ -1,6 +1,7 @@
 import { suite } from 'uvu'
 import * as assert from 'uvu/assert'
 import { isLoggedIn, whereTo } from '../src/utils.js'
+// import { sessionFromCookies, cookiesFromSession } from '../src/utils'
 // import { mockServer } from './server.mock.js'
 
 const UtilitySuite = suite('Sentry utility functions')

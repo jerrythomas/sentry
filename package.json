@@ -28,6 +28,9 @@
     "./firebase": {
       "import": "./src/firebase.js"
     },
+    "./supabase": {
+      "import": "./src/supabase.js"
+    },
     "./utils": {
       "import": "./src/utils.js"
     },
@@ -56,26 +59,32 @@
     "@sveltejs/kit": "^1.0.0-next.201",
     "auto-changelog": "^2.3.0",
     "autoprefixer": "^10.4.0",
-    "blueimp-md5": "^2.19.0",
     "c8": "^7.10.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-svelte3": "^3.2.1",
     "firebase": "^9.5.0",
+    "js-yaml": "^4.1.0",
     "miragejs": "^0.1.42",
     "postcss": "^8.4.4",
     "prettier": "^2.5.0",
     "release-it": "^14.11.8",
     "svelte": "^3.44.2",
     "svelte-preprocess": "^4.9.8",
-    "tailwindcss": "^2.2.19",
+    "svelte-windicss-preprocess": "^4.2.3",
     "uvu": "^0.5.2",
-    "windicss": "^3.2.1"
+    "windicss": "^3.2.1",
+    "xhr2": "^0.2.1"
   },
   "publishConfig": {
     "access": "public"
   },
   "auto-changelog": {
     "unreleased": false
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^1.28.5",
+    "cookie": "^0.4.1",
+    "supabase-js": "link:@@supabase/supabase-js"
   }
 }
