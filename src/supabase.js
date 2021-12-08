@@ -1,95 +1,93 @@
-import { createClient } from '@supabase/supabase-js'
+import { writable } from 'svelte/store'
+import { Router } from './router.js'
 
 function createSentry() {
-	const { subscribe, set } = writable({})
+	const { subscribe, set } = writable({
+		user: {},
+		token: null
+	})
 
 	let supabase
-	let homePage
-	let startPage
+	let router
 
-	function init(config, routes) {
-		reset()
-		supabase = createClient(config.supabaseUrl, config.supabaseAnonKey)
-		homePage = routes.home
-		startPage = routes.start
+	function init(config) {
+		router = new Router(config)
+		supabase = config.supabase
+
+		set({ user: supabase.auth.user(), token: null })
 	}
 
-	function reset() {
-		set({ user: {}, token: null })
+	async function handleSignIn(request) {
+		const { email, provider } = Object.assign(
+			Object.fromEntries(request.query.entries()),
+			Object.fromEntries(request.body.entries())
+		)
+
+		if (provider === 'magic') {
+			const { error } = await supabase.auth.signIn(
+				{ email },
+				{ redirectTo: request.headers.origin }
+			)
+			return { error, email, provider }
+		}
+		return 'not supported yet'
 	}
 
-	async function watch() {
-		supabase.auth.onAuthStateChange((event, session) => {
-			console.log(event, session)
-			if (!paused) onChange({ user })
+	async function handleSignOut() {
+		await supabase.auth.signOut()
+		await updateSession()
+		window.location.href = router.login
+	}
+
+	function protect(route, session, response) {
+		router.authRoles = session?.role
+		const redirect = router.redirect(route)
+
+		if (response) {
+			return redirect === route
+				? response
+				: { status: 302, headers: { location: redirect } }
+		} else {
+			return redirect === route ? {} : { status: 302, redirect }
+		}
+	}
+
+	async function handleAuthChange() {
+		supabase.auth.onAuthStateChange(async (event, session) => {
+			await updateSession(event, session)
+
+			if (session) {
+				set({ user: session.user })
+				window.location.href = router.home
+			} else {
+				set({ user: {} })
+				window.location.href = router.login
+			}
 		})
 	}
 
-	function getLoginHandler(provider, scopes = [], params = []) {
-		const { user, session, error } = await supabase.auth.signIn(
-			{
-				// provider can be 'github', 'google', 'gitlab', or 'bitbucket'
-				provider
-			},
-			{ scopes, params }
-		)
-		// const authProvider = authProviders[provider]()
-		// scopes.map((scope) => authProvider.addScope(scope))
-		// params.map((param) => authProvider.setCustomParameters(param))
-		console.log(user, session, error)
-		// const oAuthToken = session.provider_token
-		// const login = async () => {
-		// 	paused = true
-		// 	const result = await signInWithPopup(auth, authProvider)
-		// 	if (result.user) {
-		// 		await onChange(result, true)
-		// 	}
-		// }
-		// return login
+	async function updateSession(event, session) {
+		await fetch(router.endpoints.sessionCookie, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			credentials: 'same-origin',
+			body: JSON.stringify({ event, session })
+		})
 	}
 
-	async function logout() {
-		paused = true
-		const { error } = await supabase.auth.signOut()
-		await onChange()
+	function routes() {
+		return { authUrl: router.endpoints.signIn, loginUrl: router.login }
 	}
 
-	async function onChange(result, refresh = false) {
-		// let user = {}
-		let token = null
-		let register = null
-		let loggedIn = false
-
-		if ('user' in result) {
-			user = {
-				name: result.user.displayName,
-				avatar: result.user.photoURL,
-				email: result.user.email,
-				emailVerified: result.user.emailVerified,
-				domain: result.user.email.split('@')[1],
-				id: result.user.uid
-			}
-			// const credential = OAuthProvider.credentialFromResult(result)
-			if ('session' in result) token = result.session.provider_token
-			loggedIn = true
-
-			if (refresh) register = { ...user }
-		}
-
-		await setCookie(user)
-		set({ user, loggedIn, token, register })
-		paused = false
-		redirect(user.id ? homePage : startPage)
+	return {
+		subscribe,
+		init,
+		routes,
+		protect,
+		handleAuthChange,
+		handleSignIn,
+		handleSignOut
 	}
-
-	function redirect(path) {
-		if (window.location.pathname != path) {
-			invalidate(path)
-			goto(path)
-		}
-	}
-
-	return { subscribe, init, getLoginHandler, logout, watch }
 }
 
 export const sentry = createSentry()

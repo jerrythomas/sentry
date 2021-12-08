@@ -4,6 +4,6 @@ node_modules
 /.svelte-kit
 /package
 .env
-
-# Supabase
-.supabase
+.env.*
+.vercel
+.output

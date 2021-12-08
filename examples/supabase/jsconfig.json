@@ -4,8 +4,8 @@
 		"paths": {
 			"$lib": ["src/lib"],
 			"$lib/*": ["src/lib/*"],
-			"$config": ["src/lib"],
-			"$config/*": ["src/lib/*"]
+			"$config": ["src/config"],
+			"$config/*": ["src/config/*"]
 		}
 	},
 	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte"]

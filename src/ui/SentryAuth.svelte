@@ -1,19 +1,12 @@
 <script>
 	import AuthProvider from './AuthProvider.svelte'
 	export let providers
+	export let authUrl
 </script>
 
-<div class="space-y-3">
+<div class="flex flex-col gap-2 m-auto">
 	<h1>Sign in with</h1>
-	{#each providers as provider}
-		<AuthProvider {...provider} />
+	{#each providers as { provider, label }}
+		<AuthProvider {provider} {label} {authUrl} />
 	{/each}
 </div>
-
-<style lang="postcss">
-	@import url('../global.css');
-	div {
-		display: flex;
-		flex-direction: column;
-	}
-</style>

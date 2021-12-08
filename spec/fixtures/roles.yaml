@@ -1,0 +1,67 @@
+options:
+  byRole :
+    public:
+    - /about
+    authorized:
+    - /users
+    developer:
+    - /dev
+    - /inbox
+
+expected:
+  home: /
+  login: /login
+  logout: /logout
+  endpoints:
+    signIn: /auth/signin
+    sessionCookie: /auth/session
+  byRole:
+    public:
+    - /about
+    - /auth/session
+    - /auth/signin
+    - /login
+    authorized:
+    - /
+    - /users
+    developer:
+    - /
+    - /dev
+    - /inbox
+
+data:
+  - roles: ""
+    routes:
+    - /about
+    - /auth/session
+    - /auth/signin
+    - /login
+  - roles: authorized
+    routes:
+    - /
+    - /about
+    - /auth/session
+    - /auth/signin
+    - /logout
+    - /users
+  - roles: developer
+    routes:
+    - /
+    - /about
+    - /auth/session
+    - /auth/signin
+    - /dev
+    - /inbox
+    - /logout
+  - roles:
+    - developer
+    - authorized
+    routes:
+    - /
+    - /about
+    - /auth/session
+    - /auth/signin
+    - /dev
+    - /inbox
+    - /logout
+    - /users

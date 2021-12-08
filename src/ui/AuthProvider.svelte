@@ -1,36 +1,73 @@
 <script>
 	import Icon from './Icon.svelte'
 	import { icons } from '../icons'
-	import { sentry } from '../firebase'
+	import IconButton from './IconButton.svelte'
+	import IconInput from './IconInput.svelte'
 
 	export let provider
 	export let label
-	export let scopes = []
-	export let params = []
-
-	const signIn = sentry.getLoginHandler(provider, scopes, params)
+	export let authUrl
 
 	$: title = label.toLowerCase() === provider ? 'Continue with ' + label : label
 </script>
 
-<button class={provider} on:click={signIn}>
-	<Icon {title} icon={icons[provider]} />
-	<p>{title}</p>
-</button>
+<form
+	method="post"
+	action={authUrl}
+	class="flex flex-row w-full leading-loose h-11 text-lg"
+>
+	<input type="hidden" name="provider" value={provider} />
+	{#if provider === 'magic'}
+		<IconInput type="email" name="email" placeholder={label}>
+			<Icon icon={icons[provider]} slot="icon" />
+		</IconInput>
+	{:else}
+		<IconButton label={title} class={provider}>
+			<Icon icon={icons[provider]} slot="icon" />
+		</IconButton>
+	{/if}
+</form>
 
 <style lang="postcss">
-	button {
-		display: flex;
-		flex-direction: row;
-		border: 1px solid;
-		border-radius: 0.25rem;
-		padding: 0.5rem 1rem;
-		font-size: 1rem;
-		vertical-align: middle;
+	:global(.google) {
+		background-color: #ffffff;
+		color: #757575;
 	}
-	button p {
-		display: flex;
-		flex-grow: 1;
-		margin-left: 1rem;
+	:global(.github) {
+		background-color: #333333;
+		color: #ffffff;
+	}
+	:global(.microsoft) {
+		background-color: #2f2f2f;
+		color: #ffffff;
+	}
+	:global(.facebook) {
+		background-color: #3b5998;
+		color: #ffffff;
+	}
+
+	:global(.twitter) {
+		background-color: #55acee;
+		color: #ffffff;
+	}
+	:global(.apple) {
+		background-color: black;
+		color: #ffffff;
+	}
+	:global(.mail) {
+		background-color: #db4437;
+		color: #ffffff;
+	}
+	:global(.phone) {
+		background-color: #02bd7e;
+		color: #ffffff;
+	}
+	:global(.anonymous) {
+		background-color: #55acee;
+		color: #ffffff;
+	}
+	:global(.magic) {
+		background-color: #ffffff;
+		color: #333333;
 	}
 </style>

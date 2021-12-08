@@ -1,4 +1,9 @@
-export { routes } from './routes'
+import { sentry } from '@jerrythomas/sentry/supabase'
+import { supabase } from './auth'
+
 export { providers } from './providers'
-export { menu } from './menu'
-export { config } from './auth'
+// export { routes } from './routes'
+
+sentry.init({ supabase })
+
+export { supabase, sentry }

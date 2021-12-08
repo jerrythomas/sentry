@@ -1,0 +1,127 @@
+options:
+  byRole :
+    public:
+    - /about
+    authorized:
+    - /users
+    developer:
+    - /dev
+    - /inbox
+
+data:
+  - roles: ""
+    routes:
+    - visited: /about
+      redirect: /about
+    - visited: /about/us
+      redirect: /about/us
+    - visited: /aboutturn
+      redirect: /login
+    - visited: /auth/session
+      redirect: /auth/session
+    - visited: /auth/signin
+      redirect: /auth/signin
+    - visited: /login
+      redirect: /login
+    - visited: /
+      redirect: /login
+    - visited: /logout
+      redirect: /login
+    - visited: /unknown
+      redirect: /login
+    - visited: /users
+      redirect: /login
+    - visited: /dev
+      redirect: /login
+    - visited: /inbox
+      redirect: /login
+
+  - roles: "authorized"
+    routes:
+    - visited: /about
+      redirect: /about
+    - visited: /auth/session
+      redirect: /auth/session
+    - visited: /auth/signin
+      redirect: /auth/signin
+    - visited: /login
+      redirect: /
+    - visited: /logout
+      redirect: /logout
+    - visited: /
+      redirect: /
+    - visited: /users
+      redirect: /users
+    - visited: /users/child
+      redirect: /users/child
+    - visited: /userschild
+      redirect: /
+    - visited: /dev
+      redirect: /
+    - visited: /inbox
+      redirect: /
+    - visited: /unknown
+      redirect: /
+
+  - roles: "developer"
+    routes:
+    - visited: /about
+      redirect: /about
+    - visited: /auth/session
+      redirect: /auth/session
+    - visited: /auth/signin
+      redirect: /auth/signin
+    - visited: /login
+      redirect: /
+    - visited: /logout
+      redirect: /logout
+    - visited: /
+      redirect: /
+    - visited: /users
+      redirect: /
+    - visited: /users/child
+      redirect: /
+    - visited: /userschild
+      redirect: /
+    - visited: /dev
+      redirect: /dev
+    - visited: /dev/about
+      redirect: /dev/about
+    - visited: /develop
+      redirect: /
+    - visited: /inbox
+      redirect: /inbox
+    - visited: /unknown
+      redirect: /
+  - roles:
+    - developer
+    - authorized
+    routes:
+    - visited: /about
+      redirect: /about
+    - visited: /auth/session
+      redirect: /auth/session
+    - visited: /auth/signin
+      redirect: /auth/signin
+    - visited: /login
+      redirect: /
+    - visited: /logout
+      redirect: /logout
+    - visited: /
+      redirect: /
+    - visited: /users
+      redirect: /users
+    - visited: /users/child
+      redirect: /users/child
+    - visited: /userschild
+      redirect: /
+    - visited: /dev
+      redirect: /dev
+    - visited: /dev/about
+      redirect: /dev/about
+    - visited: /develop
+      redirect: /
+    - visited: /inbox
+      redirect: /inbox
+    - visited: /unknown
+      redirect: /
