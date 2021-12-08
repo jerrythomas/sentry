@@ -22,7 +22,7 @@
 			<Icon icon={icons[provider]} slot="icon" />
 		</IconInput>
 	{:else}
-		<IconButton label={title} class={provider}>
+		<IconButton type="submit" label={title} class={provider}>
 			<Icon icon={icons[provider]} slot="icon" />
 		</IconButton>
 	{/if}

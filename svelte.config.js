@@ -7,7 +7,7 @@ const config = {
 		target: '#svelte'
 	},
 	vite: {
-		plugins: [WindiCSS()]
+		plugins: [windi()]
 	}
 }
 

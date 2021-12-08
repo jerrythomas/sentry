@@ -2,7 +2,7 @@ options:
   byRole :
     public:
     - /about
-    authorized:
+    authenticated:
     - /users
     developer:
     - /dev
@@ -21,7 +21,7 @@ expected:
     - /auth/session
     - /auth/signin
     - /login
-    authorized:
+    authenticated:
     - /
     - /users
     developer:
@@ -36,7 +36,7 @@ data:
     - /auth/session
     - /auth/signin
     - /login
-  - roles: authorized
+  - roles: authenticated
     routes:
     - /
     - /about
@@ -55,7 +55,7 @@ data:
     - /logout
   - roles:
     - developer
-    - authorized
+    - authenticated
     routes:
     - /
     - /about

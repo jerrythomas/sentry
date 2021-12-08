@@ -62,7 +62,7 @@ SupabaseSuite('Should handle sign in with magic link', async (context) => {
 		calls.push({
 			function: 'signIn',
 			input: { email },
-			options: { redirectTo: 'http://localhost:3000' }
+			options: { redirectTo: 'http://localhost:3000/login' }
 		})
 		const params = new URLSearchParams({ email, provider })
 		const { error } = await sentry.handleSignIn({
@@ -102,7 +102,7 @@ SupabaseSuite('Should handle other sign in methods', async (context) => {
 		// calls.push({
 		// 	function: 'signIn',
 		// 	input: { email },
-		// 	options: { redirectTo: 'http://localhost:3000' }
+		// 	options: { redirectTo: 'http://localhost:3000/login' }
 		// })
 		const params = new URLSearchParams({ email, provider })
 		const result = await sentry.handleSignIn({
@@ -176,13 +176,13 @@ SupabaseSuite('Should handle sign out', async (context) => {
 SupabaseSuite('Should protect route', async (context) => {
 	// before auth
 	let result = sentry.protect('/')
-	assert.equal(result, { status: 302, redirect: '/login' })
+	assert.equal(result, { status: 302, headers: { location: '/login' } })
 	result = sentry.protect('/login')
 	assert.equal(result, {})
 
 	// after auth
 	result = sentry.protect('/login', { role: 'authenticated' })
-	assert.equal(result, { status: 302, redirect: '/' })
+	assert.equal(result, { status: 302, headers: { location: '/' } })
 	result = sentry.protect('/', { role: 'authenticated' }, { placeholder: true })
 	assert.equal(result, { placeholder: true })
 })

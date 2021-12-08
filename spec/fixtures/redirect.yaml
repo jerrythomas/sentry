@@ -2,7 +2,7 @@ options:
   byRole :
     public:
     - /about
-    authorized:
+    authenticated:
     - /users
     developer:
     - /dev
@@ -36,7 +36,7 @@ data:
     - visited: /inbox
       redirect: /login
 
-  - roles: "authorized"
+  - roles: "authenticated"
     routes:
     - visited: /about
       redirect: /about
@@ -95,7 +95,7 @@ data:
       redirect: /
   - roles:
     - developer
-    - authorized
+    - authenticated
     routes:
     - visited: /about
       redirect: /about

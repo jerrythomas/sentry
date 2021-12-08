@@ -16,20 +16,25 @@ create table public.todos
 (
   id        uuid not null primary key default extensions.uuid_generate_v4()
 , text      varchar
+, done      boolean default false
 , user_id   uuid references auth.users(id)
 );
 ```
 
 Row level security enabled on user id
 
-## Developing
+## Getting started
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Get started quickly using [degit](https://github.com/Rich-Harris/degit).
 
 ```bash
+degit jerrythomas/sentry/examples/supabase my-app
+cd my-app
 npm i --save-dev @jerrythomas/sentry@beta
 npm run dev
+```
 
+```
 # or start the server and open the app in a new browser tab
 npm run dev -- --open
 ```

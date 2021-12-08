@@ -1,16 +1,16 @@
-import adapter from '@sveltejs/adapter-auto'
-import path from 'path'
-// import WindiCSS from 'vite-plugin-windicss'
-import { windi } from 'svelte-windicss-preprocess'
+import path from 'path';
+import WindiCSS from 'vite-plugin-windicss';
+import adapter from '@sveltejs/adapter-auto';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess: [windi({})],
 	kit: {
 		adapter: adapter(),
+
+		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
 		vite: {
-			// plugins: [windi()],
+			plugins: [WindiCSS()],
 			resolve: {
 				alias: {
 					$config: path.resolve('./src/config')
@@ -18,6 +18,6 @@ const config = {
 			}
 		}
 	}
-}
+};
 
-export default config
+export default config;

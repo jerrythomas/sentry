@@ -5,32 +5,40 @@
 			props: {
 				status: page.query.get('status')
 			}
-		}
+		};
 	}
 </script>
 
 <script>
-	import SentryAuth from '$lib/ui/SentryAuth.svelte'
-	import { providers } from '$config/providers'
-	import { sentry } from '$config'
+	import { SentryAuth } from '@jerrythomas/sentry';
+	import { providers } from '$config/providers';
+	import { sentry } from '$config';
+	import { onMount } from 'svelte';
+
+	onMount(async () => {
+		await sentry.handleAuthChange();
+	});
 
 	const messages = {
 		S001: 'Magic link has been sent to your email. Please check your spam/junk mail also.',
 		E001: 'Rate limit exceeded.'
-	}
+	};
 
-	const { authUrl } = sentry.routes()
+	const { authUrl } = sentry.routes();
 
-	export let status
+	export let status;
 
-	$: info = status in messages && status.startsWith('S') ? messages[status] : null
-	$: error = status in messages && status.startsWith('E') ? messages[status] : null
+	$: info = status in messages && status.startsWith('S') ? messages[status] : null;
+	$: error = status in messages && status.startsWith('E') ? messages[status] : null;
 </script>
 
+<svelte:head>
+	<title>Login</title>
+</svelte:head>
 <div class="h-full flex flex-col flex-grow justify-center items-center ">
 	<div class="relative py-4 w-full sm:max-w-sm">
 		<div
-			class="absolute inset-0 bg-gradient-to-br from-primary-500 to-secondary-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"
+			class="absolute inset-0 bg-gradient-to-br from-orange-500 to-pink-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"
 		/>
 		<div
 			class="relative py-10 px-8 bg-skin-base text-skin-base shadow-lg sm:rounded-3xl flex flex-col gap-8 items-center"

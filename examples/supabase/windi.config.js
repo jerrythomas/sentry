@@ -1,12 +1,12 @@
-import colors from 'windicss/colors'
+import colors from 'windicss/colors';
 
 function withOpacity(cssVariable) {
 	return ({ opacityValue }) => {
 		if (opacityValue !== undefined) {
-			return `rgba(var(${cssVariable}), ${opacityValue})`
+			return `rgba(var(${cssVariable}), ${opacityValue})`;
 		}
-		return `rgb(var(${cssVariable}))`
-	}
+		return `rgb(var(${cssVariable}))`;
+	};
 }
 
 const config = {
@@ -14,20 +14,10 @@ const config = {
 		include: [
 			'./**/*.{html,js,svelte,ts,css}',
 			'./node_modules/@jerrythomas/sentry/src/**/*.{html,js,svelte,ts,css}'
-			// './node_modules/svelte-themable-ui/src/**/*.{html,js,svelte,ts,css}'
 		]
 	},
 	theme: {
-		fontFamily: {
-			mono: ['Victor-Mono', 'monospace'],
-			serif: ['Montserrat', 'ui-serif', 'sans-serif'],
-			body: ['Montserrat', 'ui-serif', 'sans-serif']
-		},
-
 		extend: {
-			fontSize: {
-				xxl: '10rem'
-			},
 			textColor: {
 				skin: {
 					base: withOpacity('--color-text-base'),
@@ -64,13 +54,11 @@ const config = {
 					900: '#2F1A00'
 				},
 				secondary: colors.pink
-			},
-			backgroundImage: (theme) => ({
-				texture: "url('/subtle-grey.png')"
-			})
+			}
 		}
 	},
+	variants: {},
 	plugins: []
-}
+};
 
-module.exports = config
+module.exports = config;

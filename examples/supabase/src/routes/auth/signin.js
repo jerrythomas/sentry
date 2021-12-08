@@ -9,14 +9,17 @@ export async function post(request) {
 	let status = 'S001'
 	const { loginUrl } = sentry.routes()
 
-	const { error, email, provider } = sentry.handleSignIn(request)
+	const { error, email, provider } = await sentry.handleSignIn(request)
 
 	if (error) {
 		status = 'E001'
 		console.error(error)
 	}
 
-	if (request.method !== 'GET' && request.headers.accept !== 'application/json') {
+	if (
+		request.method !== 'GET' &&
+		request.headers.accept !== 'application/json'
+	) {
 		return {
 			status: 303,
 			headers: {
