@@ -10,23 +10,9 @@ function createSentry() {
 	let supabase
 	let router
 
-	// this should go intou router
-	let endpoints = {
-		signIn: '/api/signin',
-		sessionCookie: '/api/session'
-	}
-
-	// let providers = [{ provider: 'magic', label: 'email for Magic Link' }]
-
 	function init(config) {
 		router = new Router(config)
 		supabase = config.supabase
-
-		// check if providers is an array and throw exception
-		// providers =
-		// 	Array.isArray(config.providers) && config.providers.length > 0
-		// 		? config.providers
-		// 		: providers
 
 		set({ user: supabase.auth.user(), token: null })
 	}
@@ -36,7 +22,7 @@ function createSentry() {
 			Object.fromEntries(request.query.entries()),
 			Object.fromEntries(request.body.entries())
 		)
-		// console.log(email, provider)
+
 		if (provider === 'magic') {
 			const { error } = await supabase.auth.signIn(
 				{ email },
@@ -53,14 +39,21 @@ function createSentry() {
 		window.location.href = router.login
 	}
 
-	function protect(route, session) {
-		const redirect = router.redirect(route, session?.role)
-		return redirect === route ? {} : { status: 302, redirect }
+	function protect(route, session, response) {
+		router.authRoles = session?.role
+		const redirect = router.redirect(route)
+
+		if (response) {
+			return redirect === route
+				? response
+				: { status: 302, headers: { location: redirect } }
+		} else {
+			return redirect === route ? {} : { status: 302, redirect }
+		}
 	}
 
 	async function handleAuthChange() {
 		supabase.auth.onAuthStateChange(async (event, session) => {
-			// console.log('auth change', event, session)
 			await updateSession(event, session)
 
 			if (session) {
@@ -74,21 +67,22 @@ function createSentry() {
 	}
 
 	async function updateSession(event, session) {
-		try {
-			await fetch(endpoints.sessionCookie, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				credentials: 'same-origin',
-				body: JSON.stringify({ event, session })
-			})
-		} catch (err) {
-			console.error(err.message)
-		}
+		await fetch(router.endpoints.sessionCookie, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			credentials: 'same-origin',
+			body: JSON.stringify({ event, session })
+		})
+	}
+
+	function routes() {
+		return { authUrl: router.endpoints.signIn, loginUrl: router.login }
 	}
 
 	return {
 		subscribe,
 		init,
+		routes,
 		protect,
 		handleAuthChange,
 		handleSignIn,

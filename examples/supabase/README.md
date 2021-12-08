@@ -1,26 +1,33 @@
-# create-svelte
+# Svelte with Supabase
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte);
+A basic template that can be used as a starter for your supabase + svelte apps.
 
-## Creating a project
+- Public routes
+  - home
+  - about
+  - login
+- Authenticated routes
+  - todos
 
-If you're seeing this, you've probably already done this step. Congrats!
+Todo's are stored into supabase as todos table
 
-```bash
-# create a new project in the current directory
-npm init svelte@next
-
-# create a new project in my-app
-npm init svelte@next my-app
+```sql
+create table public.todos
+(
+  id        uuid not null primary key default extensions.uuid_generate_v4()
+, text      varchar
+, user_id   uuid references auth.users(id)
+);
 ```
 
-> Note: the `@next` is temporary
+Row level security enabled on user id
 
 ## Developing
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```bash
+npm i --save-dev @jerrythomas/sentry@beta
 npm run dev
 
 # or start the server and open the app in a new browser tab

@@ -1,6 +1,4 @@
-import Icon from './ui/Icon.svelte'
-import SentryAuth from './ui/SentryAuth.svelte'
+export { default as Icon } from './ui/Icon.svelte'
+export { default as SentryAuth } from './ui/SentryAuth.svelte'
 
-import { whereTo } from './utils'
-
-export { Icon, SentryAuth, whereTo }
+export { sessionFromCookies, cookiesFromSession } from './helper'

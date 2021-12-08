@@ -1,8 +1,7 @@
 import { suite } from 'uvu'
 import * as assert from 'uvu/assert'
 import { sentry } from '../src/supabase.js'
-import xhr from 'xhr2'
-import { mockServer } from './server.mock.js'
+import fetchMock from 'fetch-mock'
 
 const SupabaseSuite = suite('Sentry for Supabase')
 
@@ -11,11 +10,10 @@ const VALID_EMAIL = 'john@doe@example.com'
 
 SupabaseSuite.before(async (context) => {
 	global.window = { location: { href: '' } }
-	global.XMLHttpRequest = xhr
 
 	context.calls = []
 	context.user = {}
-	// stubbed supabase client instance
+
 	context.supabase = {
 		auth: {
 			user: () => {
@@ -81,6 +79,7 @@ SupabaseSuite('Should handle sign in with magic link', async (context) => {
 	assert.equal(calls, context.calls)
 	context.calls = []
 })
+
 SupabaseSuite('Should handle other sign in methods', async (context) => {
 	const data = [
 		{ mode: 'query', email: VALID_EMAIL, provider: 'other' },
@@ -88,7 +87,7 @@ SupabaseSuite('Should handle other sign in methods', async (context) => {
 		{ mode: 'body', email: VALID_EMAIL, provider: 'other' },
 		{ mode: 'body', email: ERROR_EMAIL, provider: 'other' }
 	]
-	let calls = []
+	// let calls = []
 	let count = 0
 	let unsubscribe = sentry.subscribe((data) => {
 		if (count === 1) assert.equal(data.user, {})
@@ -126,12 +125,22 @@ SupabaseSuite('Should handle auth change', async (context) => {
 		if (count === 1) assert.equal(data.user, { id: '123', email: VALID_EMAIL })
 		count++
 	})
-
+	fetchMock.mock('/auth/session', 200)
 	await context.authStateCallback('SIGNED_IN', {
 		user: { id: '123', email: VALID_EMAIL }
 	})
 
 	unsubscribe()
+	const [endpoint, params] = fetchMock.lastCall()
+	assert.equal(endpoint, '/auth/session')
+	assert.equal(params, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		credentials: 'same-origin',
+		body: `{"event":"SIGNED_IN","session":{"user":{"id":"123","email":"${VALID_EMAIL}"}}}`
+	})
+
+	fetchMock.restore()
 })
 
 SupabaseSuite('Should handle sign out', async (context) => {
@@ -145,8 +154,19 @@ SupabaseSuite('Should handle sign out', async (context) => {
 	// sentry.init({ supabase: context.supabase })
 	context.calls = []
 
+	fetchMock.mock('/auth/session', 200)
 	await sentry.handleSignOut()
 	unsubscribe()
+	const [endpoint, params, _] = fetchMock.lastCall()
+	assert.equal(endpoint, '/auth/session')
+	assert.equal(params, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		credentials: 'same-origin',
+		body: '{}'
+	})
+	// console.log('sign out', endpoint, params)
+	fetchMock.restore()
 	count = 0
 	assert.equal(window.location.href, '/login')
 	assert.equal(context.calls, [{ function: 'signOut', user: {} }])
@@ -154,10 +174,17 @@ SupabaseSuite('Should handle sign out', async (context) => {
 })
 
 SupabaseSuite('Should protect route', async (context) => {
+	// before auth
 	let result = sentry.protect('/')
 	assert.equal(result, { status: 302, redirect: '/login' })
 	result = sentry.protect('/login')
 	assert.equal(result, {})
+
+	// after auth
+	result = sentry.protect('/login', { role: 'authenticated' })
+	assert.equal(result, { status: 302, redirect: '/' })
+	result = sentry.protect('/', { role: 'authenticated' }, { placeholder: true })
+	assert.equal(result, { placeholder: true })
 })
 
 SupabaseSuite.run()

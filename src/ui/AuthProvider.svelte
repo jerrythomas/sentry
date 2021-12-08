@@ -6,15 +6,15 @@
 
 	export let provider
 	export let label
-	export let authEndpoint
+	export let authUrl
 
 	$: title = label.toLowerCase() === provider ? 'Continue with ' + label : label
 </script>
 
 <form
 	method="post"
-	action={authEndpoint}
-	class="flex flex-row leading-loose h-11 text-lg"
+	action={authUrl}
+	class="flex flex-row w-full leading-loose h-11 text-lg"
 >
 	<input type="hidden" name="provider" value={provider} />
 	{#if provider === 'magic'}
