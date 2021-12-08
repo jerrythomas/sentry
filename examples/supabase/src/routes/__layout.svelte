@@ -1,27 +1,13 @@
-<script context="module">
-	import { sentry } from '$config'
-
-	// /** @type {import('@sveltejs/kit').Load} */
-	// export async function load({ page, fetch, session, stuff }) {
-	// 	console.log('layout => ', page.path, session, sentry.handleTraffic(page.path, session))
-	// 	// return {}
-	// 	return sentry.handleTraffic(page.path, session)
-	// }
-</script>
-
 <script>
-	import Header from '$lib/header/Header.svelte'
-	import { onMount } from 'svelte'
+	import 'virtual:windi.css'
 	import '../app.css'
 
-	onMount(async () => {
-		await sentry.handleAuthChange()
-	})
+	import Header from '$lib/header/Header.svelte'
 </script>
 
 <Header />
 
-<main>
+<main class="justify-center items-center w-full p-10">
 	<slot />
 </main>
 
@@ -31,5 +17,33 @@
 	</p>
 </footer>
 
-<style windi:preflights:global windi:safelist:global>
+<style>
+	main {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		padding: 1rem;
+		width: 100%;
+		max-width: 1024px;
+		margin: 0 auto;
+		box-sizing: border-box;
+	}
+
+	footer {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding: 40px;
+	}
+
+	footer a {
+		font-weight: bold;
+	}
+
+	@media (min-width: 480px) {
+		footer {
+			padding: 40px 0;
+		}
+	}
 </style>

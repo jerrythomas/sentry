@@ -3,20 +3,17 @@
 
 	// see https://kit.svelte.dev/docs#loading
 	export const load = async ({ fetch, session }) => {
-		const res = await fetch(`/api/todos?user_id=${session.id}`)
+		const res = await fetch(`/data/todos?user_id=${session.id}`)
 
 		if (res.ok) {
-			const todos = await res.json()
-			console.log(todos)
+			const result = await res.json()
 			return {
-				props: { todos }
+				props: { todos: result.data }
 			}
 		}
 
 		const { message } = await res.json()
-
 		return {
-			status: 500,
 			error: new Error(message)
 		}
 	}
@@ -27,31 +24,33 @@
 	import { flip } from 'svelte/animate'
 	import { sentry } from '$config'
 
-	export let todos
-	$: user = $sentry.user
-	$: console.log(user)
+	export let todos = []
 
 	async function patch(res) {
 		const todo = await res.json()
 
 		todos = todos.map((t) => {
-			if (t.uid === todo.uid) return todo
+			if (t.id === todo.id) return todo
 			return t
 		})
 	}
+
+	// $: console.log($sentry.user)
+	$: user_id = $sentry.user?.id
+	// $: console.log(user_id, todos)
 </script>
 
 <svelte:head>
 	<title>Todos</title>
 </svelte:head>
 
-<div class="todos">
-	<h1>Todos</h1>
+<div class=" flex flex-col p-10 border shadow-xl rounded-md">
+	<h1 class="text-xl font-bold text-center w-full">Todos</h1>
 
 	<form
-		class="new"
-		action="/api/todos"
 		method="post"
+		action="/data/todos?method=put"
+		class="new"
 		use:enhance={{
 			result: async (res, form) => {
 				const created = await res.json()
@@ -61,20 +60,25 @@
 			}
 		}}
 	>
-		<input name="email" aria-hidden hidden value={userId} />
-		<input name="text" aria-label="Add todo" placeholder="+ tap to add a todo" />
+		<input type="hidden" name="user_id" value={user_id} />
+		<input
+			class="border-1 border-skin-100"
+			name="text"
+			aria-label="Add todo"
+			placeholder="+ tap to add a todo"
+		/>
 	</form>
 
 	{#each todos as todo (todo.id)}
 		<div
-			class="todo"
+			class="focus-within:ring-2 outline-none focus-within:ring-secondary-400 todo"
 			class:done={todo.done}
 			transition:scale|local={{ start: 0.7 }}
 			animate:flip={{ duration: 200 }}
 		>
 			<form
-				action="/api/todos?id={todo.id}"
-				method="put"
+				action="/data/todos?method=post"
+				method="post"
 				use:enhance={{
 					pending: (data) => {
 						todo.done = !!data.get('done')
@@ -82,64 +86,80 @@
 					result: patch
 				}}
 			>
+				<input type="hidden" name="id" value={todo.id} />
 				<input type="hidden" name="done" value={todo.done ? '' : 'true'} />
-				<button class="toggle" aria-label="Mark todo as {todo.done ? 'not done' : 'done'}" />
+				<button
+					class="toggle"
+					aria-label="Mark todo as {todo.done ? 'not done' : 'done'}"
+				/>
 			</form>
 
 			<form
 				class="text"
-				action="/api/todos?id={todo.id}"
-				method="put"
+				action="/data/todos?method=post"
+				method="post"
 				use:enhance={{
 					result: patch
 				}}
 			>
-				<input aria-label="Edit todo" type="text" name="text" value={todo.text} />
+				<input type="hidden" name="id" value={todo.id} />
+				<input
+					aria-label="Edit todo"
+					type="text"
+					name="text"
+					value={todo.text}
+				/>
 				<button class="save" aria-label="Save todo" />
 			</form>
 
 			<form
-				action="/api/todos?id={todo.id}"
-				method="delete"
+				action="/data/todos?method=delete"
+				method="post"
 				use:enhance={{
 					pending: () => (todo.pending_delete = true),
 					result: () => {
-						todos = todos.filter((t) => t.id !== todo.id)
+						todos = todos.filter((t) => t.uid !== todo.uid)
 					}
 				}}
 			>
-				<button class="delete" aria-label="Delete todo" disabled={todo.pending_delete} />
+				<input type="hidden" name="id" value={todo.id} />
+				<button
+					class="delete"
+					aria-label="Delete todo"
+					disabled={todo.pending_delete}
+				/>
 			</form>
 		</div>
 	{/each}
 </div>
 
 <style>
-	.todos {
+	/* .todos {
 		width: 100%;
 		max-width: var(--column-width);
 		margin: var(--column-margin-top) auto 0 auto;
 		line-height: 1;
-	}
+	} */
 
-	.new {
+	/* .new {
 		margin: 0 0 0.5rem 0;
-	}
+	} */
 
 	input {
-		border: 1px solid transparent;
+		@apply outline-none focus:border-none;
 	}
 
-	input:focus-visible {
+	/* input:focus-visible {
 		box-shadow: inset 1px 1px 6px rgba(0, 0, 0, 0.1);
 		border: 1px solid #ff3e00 !important;
 		outline: none;
-	}
+	} */
 
 	.new input {
-		font-size: 28px;
+		font-size: 22px;
 		width: 100%;
 		padding: 0.5em 1em 0.3em 1em;
+		margin: 0.5em 0;
 		box-sizing: border-box;
 		background: rgba(255, 255, 255, 0.05);
 		border-radius: 8px;

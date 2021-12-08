@@ -36,7 +36,7 @@ RouterSuite('Should work with defaults', (context) => {
 
 	assert.equal(router.byRole, {
 		public: ['/auth/session', '/auth/signin', '/login'],
-		authorized: ['/']
+		authenticated: ['/']
 	})
 })
 

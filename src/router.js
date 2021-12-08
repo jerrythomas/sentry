@@ -14,13 +14,13 @@ export class Router {
 
 		let routes = options?.byRole || {}
 		routes.public = routes.public || []
-		routes.authorized = routes.authorized || []
+		routes.authenticated = routes.authenticated || []
 
 		this.byRole = {}
 		Object.keys(routes).map((role) => {
 			this._add(role, routes[role])
 		})
-
+		console.log(this.byRole)
 		this.authRoles = null
 	}
 

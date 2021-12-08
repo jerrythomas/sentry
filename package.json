@@ -30,12 +30,6 @@
     },
     "./supabase": {
       "import": "./src/supabase.js"
-    },
-    "./utils": {
-      "import": "./src/utils.js"
-    },
-    "./shared": {
-      "import": "./src/shared.js"
     }
   },
   "keywords": [
@@ -64,7 +58,6 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-svelte3": "^3.2.1",
     "fetch-mock": "^9.11.0",
-    "firebase": "^9.5.0",
     "js-yaml": "^4.1.0",
     "postcss": "^8.4.4",
     "prettier": "^2.5.0",
@@ -84,6 +77,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^1.28.5",
     "cookie": "^0.4.1",
-    "supabase-js": "link:@@supabase/supabase-js"
+    "firebase": "^9.6.0",
+    "supabase": "^0.5.0"
   }
 }

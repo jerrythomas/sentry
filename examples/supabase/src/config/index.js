@@ -1,9 +1,9 @@
 import { sentry } from '@jerrythomas/sentry/supabase'
 import { supabase } from './auth'
+import { routes } from './routes'
 
 export { providers } from './providers'
-// export { routes } from './routes'
 
-sentry.init({ supabase })
+sentry.init({ supabase, routes })
 
 export { supabase, sentry }

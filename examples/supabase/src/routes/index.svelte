@@ -1,8 +1,9 @@
 <script context="module">
-	export const prerender = true
+	export const prerender = true;
 </script>
 
 <script>
+	import Counter from '$lib/Counter.svelte';
 </script>
 
 <svelte:head>
@@ -18,11 +19,14 @@
 			</picture>
 		</div>
 
-		to your new<br />SvelteKit app using Supabase
+		to your new<br />SvelteKit app
 	</h1>
-	<form action="/login">
-		<button type="submit">Login</button>
-	</form>
+
+	<h2>
+		try editing <strong>src/routes/index.svelte</strong>
+	</h2>
+
+	<Counter />
 </section>
 
 <style>

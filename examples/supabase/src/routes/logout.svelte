@@ -1,10 +1,15 @@
 <script>
-	import { sentry } from '$config'
-	import { onMount } from 'svelte'
+	import { sentry } from '$config';
+	import { onMount } from 'svelte';
 
+	const message = 'Logging out...';
 	onMount(async () => {
-		await sentry.handleSignOut()
-	})
+		await sentry.handleSignOut();
+	});
 </script>
 
-<p>Logging out...</p>
+<svelte:head>
+	<title>{message}</title>
+</svelte:head>
+
+<p>{message}</p>

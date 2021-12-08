@@ -37,9 +37,14 @@ function createSentry() {
 		}
 
 		providers =
-			Array.isArray(config.providers) && config.providers.length > 0 ? config.providers : providers
+			Array.isArray(config.providers) && config.providers.length > 0
+				? config.providers
+				: providers
 		endpoints = Object.assign(endpoints, config.endpoints | {})
-		supabase = createClient(config.auth.supabaseUrl, config.auth.supabaseAnonKey)
+		supabase = createClient(
+			config.auth.supabaseUrl,
+			config.auth.supabaseAnonKey
+		)
 
 		set({ user: supabase.auth.user(), token: null })
 	}
@@ -67,7 +72,8 @@ function createSentry() {
 	}
 
 	function handleTraffic(route, session) {
-		const isAuthorized = session != null && (session.id != '' || session.email != '')
+		const isAuthorized =
+			session != null && (session.id != '' || session.email != '')
 		let isAllowed = isAuthorized || (route === ROOT && routes.rootIsPublic)
 
 		// console.log(
@@ -84,7 +90,9 @@ function createSentry() {
 			// console.log('allowed', isAllowed, route, routes.public[i], route.startsWith(routes.public[i]))
 		}
 
-		return isAllowed ? {} : { status: 302, redirect: isAuthorized ? routes.home : routes.login }
+		return isAllowed
+			? {}
+			: { status: 302, redirect: isAuthorized ? routes.home : routes.login }
 	}
 
 	async function handleAuthChange() {
@@ -111,7 +119,15 @@ function createSentry() {
 		})
 	}
 
-	return { subscribe, init, routes, handleAuthChange, handleTraffic, handleSignIn, handleSignOut }
+	return {
+		subscribe,
+		init,
+		routes,
+		handleAuthChange,
+		handleTraffic,
+		handleSignIn,
+		handleSignOut
+	}
 }
 
 export function sessionFromCookies(request) {
