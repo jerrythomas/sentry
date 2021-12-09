@@ -8,7 +8,7 @@
 		if (res.ok) {
 			const result = await res.json()
 			return {
-				props: { todos: result.data }
+				props: { session, todos: result.data }
 			}
 		}
 
@@ -24,6 +24,7 @@
 	import { flip } from 'svelte/animate'
 	import { sentry } from '$config'
 
+	export let session = {}
 	export let todos = []
 
 	async function patch(res) {
@@ -35,9 +36,7 @@
 		})
 	}
 
-	// $: console.log($sentry.user)
 	$: user_id = $sentry.user?.id
-	// $: console.log(user_id, todos)
 </script>
 
 <svelte:head>

@@ -9,8 +9,6 @@ export const handle = async ({ request, resolve }) => {
 		request.method = request.query.get('_method').toUpperCase()
 	}
 
-	console.log('hooks', request.path, sentry.protect(request.path, session))
-
 	const response = await resolve(request)
 
 	return sentry.protect(request.path, session, response)

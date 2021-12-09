@@ -14,18 +14,13 @@ const actions = {
 export async function get(request) {
 	const { entity } = request.params
 
-	// console.log('get', entity, Object.fromEntries(request.query.entries()))
 	const { data, error, status } = await actions.get(
 		entity,
 		Object.fromEntries(request.query.entries())
 	)
-	// const { data, error, status } = await supabase
-	// 	.from(entity)
-	// 	.select()
-	// 	.match(Object.fromEntries(request.query.entries()))
 
 	if (error) return { status, body: error }
-	console.log('get', entity, data)
+	// console.log('get', entity, data)
 	return {
 		status: 200,
 		body: { data }
@@ -43,19 +38,11 @@ export async function post(request) {
 	try {
 		data = Object.fromEntries(request.body.entries())
 	} catch (err) {
-		// console.error('post', method, entity, err)
+		console.error('post', method, entity, err)
 		data = request.body
 	}
 
 	const result = await actions[method](entity, data)
-
-	// if (method === 'POST') {
-	// 	result = await supabase.from(entity).upsert(data)
-	// } else if (method === 'PUT') {
-	// 	result = await supabase.from(entity).insert([data])
-	// } else if (method === 'DELETE') {
-	// 	result = await supabase.from(entity).delete().match(data)
-	// }
 
 	if (
 		!result.error &&
@@ -82,11 +69,8 @@ export async function post(request) {
  */
 export async function put(request) {
 	const { entity } = request.params
-	// console.log(entity, 'put', request.body)
 	const { data, error, status } = await actions.put(entity, request.body)
-	// let { data, error, status } = await supabase
-	// 	.from(entity)
-	// 	.insert([request.body])
+
 	if (error) return { status, body: error }
 
 	return {
@@ -102,10 +86,6 @@ export async function del(request) {
 	const { entity } = request.params
 	console.log(entity, 'del', request.body)
 	const { data, error, status } = await actions.delete(entity, request.body)
-	// const { data, error, status } = await supabase
-	// 	.from(entity)
-	// 	.delete()
-	// 	.match(request.body)
 
 	if (error) return { status, body: error }
 	return {
