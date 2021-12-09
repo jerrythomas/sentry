@@ -2,6 +2,8 @@
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/jerrythomas/sentry/Release)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/081db4df4bb805fb0e87/test_coverage)](https://codeclimate.com/github/jerrythomas/sentry/test_coverage)
+![GitHub last commit](https://img.shields.io/github/last-commit/jerrythomas/sentry)
+![NPM](https://img.shields.io/npm/l/@jerrythomas/sentry)
 
 Drop in authentication including route protection and redirects for SvelteKit apps.
 
@@ -84,7 +86,8 @@ This library consists of the following components.
 - UI component with buttons for different OAuth providers
 - Utility functions for various stages of auth lifecycle
 - Store for managing the user session
-- Cookie to allow server to identify authentication
+- Route protection for pages & endpoints
+- Logged in session details available in load function
 
 ## License
 
