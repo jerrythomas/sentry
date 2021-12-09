@@ -28,7 +28,7 @@ function createSentry() {
 				{ email },
 				{ redirectTo: request.headers.origin + router.login }
 			)
-			console.log('sign-in', email, provider)
+
 			return { error, email, provider }
 		}
 		return 'not supported yet'
@@ -56,7 +56,7 @@ function createSentry() {
 	async function handleAuthChange() {
 		supabase.auth.onAuthStateChange(async (event, session) => {
 			await updateSession(event, session)
-			console.log(session, router.home, router.login)
+
 			if (session) {
 				set({ user: session.user })
 				window.location.href = router.home

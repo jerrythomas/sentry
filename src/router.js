@@ -20,7 +20,7 @@ export class Router {
 		Object.keys(routes).map((role) => {
 			this._add(role, routes[role])
 		})
-		console.log(this.byRole)
+
 		this.authRoles = null
 	}
 
@@ -33,12 +33,14 @@ export class Router {
 		if (role === 'public') {
 			publicRoutes = [...new Set([...publicRoutes, ...routes])]
 			this.byRole[role] = publicRoutes.sort()
-			// this.rootIsPublic = this.publicRoutes.includes(ROOT)
 		} else {
 			this.byRole[role] = [...new Set([...routes, this.home])].sort()
 		}
 	}
 
+	/**
+	 * @param {string|string[]} roles
+	 */
 	set authRoles(roles) {
 		this.isAuthenticated = roles && roles !== '' ? true : false
 		this.authorizedRoles = (Array.isArray(roles) ? roles : [roles]).filter(
@@ -61,19 +63,18 @@ export class Router {
 		}
 	}
 
+	/**
+	 *
+	 * @param {string} route
+	 * @returns {string}
+	 */
 	redirect(route) {
 		let isAllowed = false
-		// console.log(route, this.isAuthenticated, this.allowedRoutes)
+
 		for (let i = 0; i < this.allowedRoutes.length && !isAllowed; i++) {
 			isAllowed =
 				route === this.allowedRoutes[i] ||
 				route.startsWith(this.allowedRoutes[i] + '/')
-			// this.allowedRoutes[i] === ROOT
-			// 	? route === this.allowedRoutes[i]
-			// 	: route === this.allowedRoutes[i] ||
-			// route.startsWith(this.allowedRoutes[i] + '/')
-			// route.startsWith(this.allowedRoutes[i] + '?')
-			// console.log(isAllowed, route, this.allowedRoutes[i])
 		}
 
 		return isAllowed ? route : this.isAuthenticated ? this.home : this.login

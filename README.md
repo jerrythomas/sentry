@@ -1,5 +1,8 @@
 # Sentry
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/jerrythomas/sentry/Release)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/081db4df4bb805fb0e87/test_coverage)](https://codeclimate.com/github/jerrythomas/sentry/test_coverage)
+
 Drop in authentication including route protection and redirects for SvelteKit apps.
 
 ![sentry](src/sentry.svg)
@@ -18,18 +21,18 @@ This is an attempt to make adding authentication to SvelteKit apps as simple as 
 - [x] Route protection
   - [x] Public pages
   - [x] Protected routes
-  - [ ] Role based protection for route
+  - [x] Role based protection for route
   - [ ] Caching blocked routes to be redirected on login
 - [ ] Different auth libraries
+  - [x] Supabase
   - [x] Firebase
   - [ ] Auth0
-  - [ ] Supabase
   - [ ] Amplify
 - [ ] Multiple providers
+  - [x] Magic Link
   - [x] Google
-  - [ ] Password
-  - [ ] Github
   - [x] Microsoft
+  - [ ] Github
   - [ ] Twitter
   - [ ] Facebook
 
@@ -37,44 +40,42 @@ This is an attempt to make adding authentication to SvelteKit apps as simple as 
 
 Get started quickly using [degit](https://github.com/Rich-Harris/degit). Select the library you want to use and run degit to get a sample app.
 
-- [x] [Firebase](examples/firebase)
+- [x] [Supabase](examples/supabase)
 
 ```bash
-degit jerrythomas/sentry/examples/firebase my-app
+degit jerrythomas/sentry/examples/supabase my-app
 ```
 
+- [x] [Firebase](examples/firebase)
 - [ ] [Auth0](examples/auth0)
 - [ ] [Amplify](examples/amplify)
-- [ ] [Supabase](examples/supabase)
 
-Take a look at the following files in the sample to understand how it works.
+Take a look at the following files/folders in the sample to understand how it works.
 
-- config.js
+- config
 - hooks.js
-- \_\_layout.svelte
-- login.svelte
+- login/index.svelte
 - logout.svelte
+- data
+- todos
+- auth
 
-### Tailwind
+### WindiCSS
 
-This library uses tailwind and the components will not render properly if the tailwind does not include the requires css classes. Ensure that the sentry library is included in the purge array of `tailwind.config.cjs`
+This library uses WindiCSS and the components will not render properly if the tailwind does not include the requires css classes. Ensure that the sentry library is included in the purge array of `windi.config.cjs`
 
 ```js
-purge: [
-    './src/**/*.{html,js,svelte,ts}',
-    'node_modules/@jerrythomas/sentry/src/**/*.{html,js,svelte,ts,css}}',
-  ],
+extract: {
+	include: [
+		'./src/**/*.{html,js,svelte,ts}',
+		'node_modules/@jerrythomas/sentry/src/**/*.{html,js,svelte,ts,css}}'
+	]
+}
 ```
 
 ## Route Configuration
 
-Routes are configurable as shown in the example `config.js` file. Sentry assumes that all routes are private by default. Public routes need to be listed so that they can be accessed without logging in.
-
-There are three attributes in the routes configuration.
-
-- home: Landing page after logging in.
-- start: Start page to be used as welcome/login page
-- public: A list of routes to be treated as public. All child routes are assumed to be public too.
+Routes are configurable as shown in the example `config/routes.js` file. Sentry assumes that all routes are private by default. Public routes need to be listed so that they can be accessed without logging in.
 
 ## Components
 

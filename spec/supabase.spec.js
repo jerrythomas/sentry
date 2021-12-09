@@ -10,7 +10,6 @@ const VALID_EMAIL = 'john@doe@example.com'
 
 SupabaseSuite.before(async (context) => {
 	global.window = { location: { href: '' } }
-
 	context.calls = []
 	context.user = {}
 
@@ -55,6 +54,7 @@ SupabaseSuite('Should handle sign in with magic link', async (context) => {
 	})
 	sentry.init({ supabase: context.supabase })
 	assert.equal(context.calls, [{ function: 'user', user: {} }])
+	assert.equal(sentry.routes(), { authUrl: '/auth/signin', loginUrl: '/login' })
 	context.calls = []
 	unsubscribe()
 
@@ -104,6 +104,7 @@ SupabaseSuite('Should handle other sign in methods', async (context) => {
 		// 	input: { email },
 		// 	options: { redirectTo: 'http://localhost:3000/login' }
 		// })
+
 		const params = new URLSearchParams({ email, provider })
 		const result = await sentry.handleSignIn({
 			query: mode === 'query' ? params : new URLSearchParams({}),

@@ -1,5 +1,13 @@
 import { supabase } from '$config/auth'
 
+const actions = {
+	get: async (entity, data) => await supabase.from(entity).select().match(data),
+	put: async (entity, data) => await supabase.from(entity).insert([data]),
+	post: async (entity, data) => await supabase.from(entity).upsert(data),
+	delete: async (entity, data) =>
+		await supabase.from(entity).delete().match(data)
+}
+
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
@@ -7,11 +15,14 @@ export async function get(request) {
 	const { entity } = request.params
 
 	// console.log('get', entity, Object.fromEntries(request.query.entries()))
-
-	const { data, error, status } = await supabase
-		.from(entity)
-		.select()
-		.match(Object.fromEntries(request.query.entries()))
+	const { data, error, status } = await actions.get(
+		entity,
+		Object.fromEntries(request.query.entries())
+	)
+	// const { data, error, status } = await supabase
+	// 	.from(entity)
+	// 	.select()
+	// 	.match(Object.fromEntries(request.query.entries()))
 
 	if (error) return { status, body: error }
 	console.log('get', entity, data)
@@ -26,25 +37,25 @@ export async function get(request) {
  */
 export async function post(request) {
 	const { entity } = request.params
-	const method = (request.query.get('method') || 'POST').toUpperCase()
+	const method = (request.query.get('method') || 'POST').toLowerCase()
 	let data
 
 	try {
 		data = Object.fromEntries(request.body.entries())
 	} catch (err) {
-		console.error('post', method, entity, err)
+		// console.error('post', method, entity, err)
 		data = request.body
 	}
 
-	let result
+	const result = await actions[method](entity, data)
 
-	if (method === 'POST') {
-		result = await supabase.from(entity).upsert(data)
-	} else if (method === 'PUT') {
-		result = await supabase.from(entity).insert([data])
-	} else if (method === 'DELETE') {
-		result = await supabase.from(entity).delete().match(data)
-	}
+	// if (method === 'POST') {
+	// 	result = await supabase.from(entity).upsert(data)
+	// } else if (method === 'PUT') {
+	// 	result = await supabase.from(entity).insert([data])
+	// } else if (method === 'DELETE') {
+	// 	result = await supabase.from(entity).delete().match(data)
+	// }
 
 	if (
 		!result.error &&
@@ -71,11 +82,11 @@ export async function post(request) {
  */
 export async function put(request) {
 	const { entity } = request.params
-	console.log(entity, 'put', request.body)
-
-	let { data, error, status } = await supabase
-		.from(entity)
-		.insert([request.body])
+	// console.log(entity, 'put', request.body)
+	const { data, error, status } = await actions.put(entity, request.body)
+	// let { data, error, status } = await supabase
+	// 	.from(entity)
+	// 	.insert([request.body])
 	if (error) return { status, body: error }
 
 	return {
@@ -90,10 +101,11 @@ export async function put(request) {
 export async function del(request) {
 	const { entity } = request.params
 	console.log(entity, 'del', request.body)
-	const { data, error, status } = await supabase
-		.from(entity)
-		.delete()
-		.match(request.body)
+	const { data, error, status } = await actions.delete(entity, request.body)
+	// const { data, error, status } = await supabase
+	// 	.from(entity)
+	// 	.delete()
+	// 	.match(request.body)
 
 	if (error) return { status, body: error }
 	return {

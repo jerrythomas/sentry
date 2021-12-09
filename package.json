@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "test": "uvu spec",
-    "coverage": "c8 --include=src uvu spec",
+    "coverage": "c8 --include=src uvu spec ",
+    "coverage:lcov": "c8 --reporter=lcov --include=src uvu spec ",
     "release": "release-it --preRelease=beta",
     "lint": "eslint src spec"
   },
