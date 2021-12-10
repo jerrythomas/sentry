@@ -30,7 +30,7 @@ export function cookiesFromSession(session) {
 			path: '/',
 			httpOnly: true,
 			sameSite: true,
-			maxAge: 3600
+			maxAge: 24 * 3600
 		})
 	)
 

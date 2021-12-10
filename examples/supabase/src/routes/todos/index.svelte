@@ -132,7 +132,7 @@
 	{/each}
 </div>
 
-<style>
+<style lang="postcss">
 	/* .todos {
 		width: 100%;
 		max-width: var(--column-width);
