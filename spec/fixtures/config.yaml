@@ -1,75 +1,127 @@
 ---
 - options:
     home: /home
-    login: /signIn
-    logout: /signOut
+    auth:
+      pages:
+        login: /signIn
+        # logout: /signOut
   expected:
     home: /home
-    login: /signIn
-    logout: /signOut
+    auth:
+      pages:
+        login: /signIn
+        logout: /auth/logout
+      endpoints:
+        signIn: /auth/signin
+        session: /auth/session
     byRole:
       public:
       - /auth/session
       - /auth/signin
+      # - /auth/logout
       - /signIn
       authenticated:
       - /home
 
 - options:
     home: /home
-    login: /signIn
-    logout: /signOut
+    auth:
+      pages:
+        login: /signIn
+        logout: /signOut
+      endpoints:
+        signIn: /auth/login
+        # session: /auth/session
+        # login: /signIn
+    # logout: /signOut
     byRole:
       public:
       - /
+      - /auth/login
+      - /signIn
       authenticated:
       - /home
       - /me
   expected:
     home: /home
-    login: /signIn
-    logout: /signOut
+    auth:
+      pages:
+        login: /signIn
+        logout: /signOut
+      endpoints:
+        signIn: /auth/login
+        session: /auth/session
+    # login: /signIn
+    # logout: /signOut
     byRole:
       public:
       - /
+      - /auth/login
       - /auth/session
-      - /auth/signin
       - /signIn
       authenticated:
       - /home
       - /me
 
 - options:
-    login: /signIn
-    logout: /signOut
+    auth:
+      pages:
+        login: /signIn
+        logout: /signOut
+      endpoints:
+        signIn: /auth/login
+        session: /auth/cookie
+    # login: /signIn
+    # logout: /signOut
     byRole:
       public:
       - /
   expected:
     home: /
-    login: /signIn
-    logout: /signOut
+    auth:
+      pages:
+        login: /signIn
+        logout: /signOut
+      endpoints:
+        signIn: /auth/login
+        session: /auth/cookie
+    # login: /signIn
+    # logout: /signOut
     byRole:
       public:
       - /
-      - /auth/session
-      - /auth/signin
+      - /auth/cookie
+      - /auth/login
       - /signIn
       authenticated:
       - /
 
 - options:
     home: /
-    login: /signIn
-    logout: /signOut
+    auth:
+      pages:
+        login: /signIn
+        logout: /signOut
+      endpoints:
+        signIn: /auth/signin
+        session: /auth/session
+    # login: /signIn
+    # logout: /signOut
     byRole:
       public:
       - /
       - /home
   expected:
     home: /
-    login: /signIn
-    logout: /signOut
+    auth:
+      pages:
+        login: /signIn
+        logout: /signOut
+      endpoints:
+        signIn: /auth/signin
+        session: /auth/session
+    # login: /signIn
+    # logout: /signOut
     byRole:
       public:
       - /

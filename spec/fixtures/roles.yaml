@@ -10,17 +10,22 @@ options:
 
 expected:
   home: /
-  login: /login
-  logout: /logout
-  endpoints:
-    signIn: /auth/signin
-    sessionCookie: /auth/session
+  auth:
+      pages:
+        login: /auth
+        logout: /auth/logout
+      endpoints:
+        signIn: /auth/signin
+        session: /auth/session
+  # login: /auth
+  # logout: /auth/logout
+  # endpoints:
+  #   signIn: /auth/signin
+  #   sessionCookie: /auth/session
   byRole:
     public:
     - /about
-    - /auth/session
-    - /auth/signin
-    - /login
+    - /auth
     authenticated:
     - /
     - /users
@@ -33,35 +38,32 @@ data:
   - roles: ""
     routes:
     - /about
-    - /auth/session
-    - /auth/signin
-    - /login
+    - /auth
   - roles: authenticated
     routes:
     - /
     - /about
+    # - /auth
+    - /auth/logout
     - /auth/session
-    - /auth/signin
-    - /logout
     - /users
   - roles: developer
     routes:
     - /
     - /about
+    - /auth/logout
     - /auth/session
-    - /auth/signin
     - /dev
     - /inbox
-    - /logout
   - roles:
     - developer
     - authenticated
     routes:
     - /
     - /about
+    # - /auth
+    - /auth/logout
     - /auth/session
-    - /auth/signin
     - /dev
     - /inbox
-    - /logout
     - /users

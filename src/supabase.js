@@ -26,7 +26,7 @@ function createSentry() {
 		if (provider === 'magic') {
 			const { error } = await supabase.auth.signIn(
 				{ email },
-				{ redirectTo: request.headers.origin + router.login }
+				{ redirectTo: request.headers.origin + router.auth.pages.login }
 			)
 
 			return { error, email, provider }
@@ -37,7 +37,7 @@ function createSentry() {
 	async function handleSignOut() {
 		await supabase.auth.signOut()
 		await updateSession()
-		window.location.href = router.login
+		window.location.href = router.auth.pages.login
 	}
 
 	function protect(route, session, response) {
@@ -62,13 +62,13 @@ function createSentry() {
 				window.location.href = router.home
 			} else {
 				set({ user: {} })
-				window.location.href = router.login
+				window.location.href = router.auth.pages.login
 			}
 		})
 	}
 
 	async function updateSession(event, session) {
-		await fetch(router.endpoints.sessionCookie, {
+		await fetch(router.auth.endpoints.session, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			credentials: 'same-origin',
@@ -77,7 +77,10 @@ function createSentry() {
 	}
 
 	function routes() {
-		return { authUrl: router.endpoints.signIn, loginUrl: router.login }
+		return {
+			authUrl: router.auth.endpoints.signIn,
+			loginUrl: router.auth.pages.login
+		}
 	}
 
 	return {

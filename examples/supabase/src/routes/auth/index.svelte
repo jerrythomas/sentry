@@ -5,31 +5,31 @@
 			props: {
 				status: page.query.get('status')
 			}
-		};
+		}
 	}
 </script>
 
 <script>
-	import { SentryAuth } from '@jerrythomas/sentry';
-	import { providers } from '$config/providers';
-	import { sentry } from '$config';
-	import { onMount } from 'svelte';
+	import { SentryAuth } from '@jerrythomas/sentry'
+	import { providers } from '$config/providers'
+	import { sentry } from '$config'
+	import { onMount } from 'svelte'
 
 	onMount(async () => {
-		await sentry.handleAuthChange();
-	});
+		await sentry.handleAuthChange()
+	})
 
 	const messages = {
 		S001: 'Magic link has been sent to your email. Please check your spam/junk mail also.',
 		E001: 'Rate limit exceeded.'
-	};
+	}
 
-	const { authUrl } = sentry.routes();
+	const { authUrl } = sentry.routes()
 
-	export let status;
-
-	$: info = status in messages && status.startsWith('S') ? messages[status] : null;
-	$: error = status in messages && status.startsWith('E') ? messages[status] : null;
+	export let status
+	$: type = status in messages && status.startsWith('S') ? 'info' : 'error'
+	// $: info = status in messages && status.startsWith('S') ? messages[status] : null;
+	// $: error = status in messages && status.startsWith('E') ? messages[status] : null;
 </script>
 
 <svelte:head>
@@ -44,14 +44,19 @@
 			class="relative py-10 px-8 bg-skin-base text-skin-base shadow-lg sm:rounded-3xl flex flex-col gap-8 items-center"
 		>
 			<img src="/sentry.svg" alt="Sentry" class="sm:w-3/5" />
-			<SentryAuth {providers} {authUrl} />
+
+			{#if status}
+				<span class={type}>{messages[status]}</span>
+			{:else}
+				<SentryAuth {providers} {authUrl} />
+			{/if}
 		</div>
 	</div>
 
-	{#if info}
-		<span class="info">{info}</span>
+	<!-- {#if info}
+
 	{/if}
 	{#if error}
 		<span class="error">{error}</span>
-	{/if}
+	{/if} -->
 </div>
