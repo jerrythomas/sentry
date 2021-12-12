@@ -5,7 +5,7 @@ import { sessionFromCookies, cookiesFromSession } from '../src/helper.js'
 const HelperSuite = suite('Helper functions')
 
 HelperSuite.before(async (context) => {
-	context.cookieProperties = 'Max-Age=86400; Path=/; HttpOnly; SameSite=Strict'
+	context.cookieProperties = 'Max-Age=3600; Path=/; HttpOnly; SameSite=Strict'
 })
 
 HelperSuite('Should extract session cookies from request', (context) => {

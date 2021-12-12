@@ -54,7 +54,7 @@ SupabaseSuite('Should handle sign in with magic link', async (context) => {
 	})
 	sentry.init({ supabase: context.supabase })
 	assert.equal(context.calls, [{ function: 'user', user: {} }])
-	assert.equal(sentry.routes(), { authUrl: '/auth/signin', loginUrl: '/login' })
+	assert.equal(sentry.routes(), { authUrl: '/auth/signin', loginUrl: '/auth' })
 	context.calls = []
 	unsubscribe()
 
@@ -62,7 +62,7 @@ SupabaseSuite('Should handle sign in with magic link', async (context) => {
 		calls.push({
 			function: 'signIn',
 			input: { email },
-			options: { redirectTo: 'http://localhost:3000/login' }
+			options: { redirectTo: 'http://localhost:3000/auth' }
 		})
 		const params = new URLSearchParams({ email, provider })
 		const { error } = await sentry.handleSignIn({
@@ -169,7 +169,7 @@ SupabaseSuite('Should handle sign out', async (context) => {
 	// console.log('sign out', endpoint, params)
 	fetchMock.restore()
 	count = 0
-	assert.equal(window.location.href, '/login')
+	assert.equal(window.location.href, '/auth')
 	assert.equal(context.calls, [{ function: 'signOut', user: {} }])
 	context.calls = []
 })
@@ -177,12 +177,12 @@ SupabaseSuite('Should handle sign out', async (context) => {
 SupabaseSuite('Should protect route', async (context) => {
 	// before auth
 	let result = sentry.protect('/')
-	assert.equal(result, { status: 302, headers: { location: '/login' } })
-	result = sentry.protect('/login')
+	assert.equal(result, { status: 302, headers: { location: '/auth' } })
+	result = sentry.protect('/auth')
 	assert.equal(result, {})
 
 	// after auth
-	result = sentry.protect('/login', { role: 'authenticated' })
+	result = sentry.protect('/auth', { role: 'authenticated' })
 	assert.equal(result, { status: 302, headers: { location: '/' } })
 	result = sentry.protect('/', { role: 'authenticated' }, { placeholder: true })
 	assert.equal(result, { placeholder: true })

@@ -26,16 +26,20 @@ RouterSuite('Should work with defaults', (context) => {
 	let router = new Router()
 
 	assert.equal(router.home, '/')
-	assert.equal(router.login, '/login')
-	assert.equal(router.logout, '/logout')
-	assert.equal(router.endpoints, {
-		signIn: '/auth/signin',
-		sessionCookie: '/auth/session'
+	assert.equal(router.auth, {
+		pages: { login: '/auth', logout: '/auth/logout' },
+		endpoints: { signIn: '/auth/signin', session: '/auth/session' }
 	})
+	// assert.equal(router.login, '/auth')
+	// assert.equal(router.logout, '/auth/logout')
+	// assert.equal(router.endpoints, {
+	// 	signIn: '/auth/signin',
+	// 	sessionCookie: '/auth/session'
+	// })
 	assert.not(router.isAuthenticated)
 
 	assert.equal(router.byRole, {
-		public: ['/auth/session', '/auth/signin', '/login'],
+		public: ['/auth'],
 		authenticated: ['/']
 	})
 })
