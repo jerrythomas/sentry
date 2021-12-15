@@ -1,3 +1,4 @@
+import { adapter } from '@jerrythomas/sentry/firebase'
 const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID
 
 export const config = {
@@ -10,3 +11,5 @@ export const config = {
 	appId: import.meta.env.VITE_FIREBASE_APP_ID,
 	measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 }
+
+export const firebase = adapter(config)

@@ -28,9 +28,6 @@
     },
     "./firebase": {
       "import": "./src/firebase.js"
-    },
-    "./supabase": {
-      "import": "./src/supabase.js"
     }
   },
   "keywords": [

@@ -36,92 +36,92 @@ data:
     - visited: /inbox
       redirect: /auth
 
-  - roles: "authenticated"
-    routes:
-    - visited: /about
-      redirect: /about
-    - visited: /auth/session
-      redirect: /auth/session
-    - visited: /auth/signin
-      redirect: /
-    - visited: /auth
-      redirect: /
-    - visited: /auth/logout
-      redirect: /auth/logout
-    - visited: /
-      redirect: /
-    - visited: /users
-      redirect: /users
-    - visited: /users/child
-      redirect: /users/child
-    - visited: /userschild
-      redirect: /
-    - visited: /dev
-      redirect: /
-    - visited: /inbox
-      redirect: /
-    - visited: /unknown
-      redirect: /
+  # - roles: "authenticated"
+  #   routes:
+  #   - visited: /about
+  #     redirect: /about
+  #   - visited: /auth/session
+  #     redirect: /auth/session
+  #   - visited: /auth/signin
+  #     redirect: /
+  #   - visited: /auth
+  #     redirect: /
+  #   - visited: /auth/logout
+  #     redirect: /auth/logout
+  #   - visited: /
+  #     redirect: /
+  #   - visited: /users
+  #     redirect: /users
+  #   - visited: /users/child
+  #     redirect: /users/child
+  #   - visited: /userschild
+  #     redirect: /
+  #   - visited: /dev
+  #     redirect: /
+  #   - visited: /inbox
+  #     redirect: /
+  #   - visited: /unknown
+  #     redirect: /
 
-  - roles: "developer"
-    routes:
-    - visited: /about
-      redirect: /about
-    - visited: /auth/session
-      redirect: /auth/session
-    - visited: /auth/signin
-      redirect: /
-    - visited: /auth
-      redirect: /
-    - visited: /auth/logout
-      redirect: /auth/logout
-    - visited: /
-      redirect: /
-    - visited: /users
-      redirect: /
-    - visited: /users/child
-      redirect: /
-    - visited: /userschild
-      redirect: /
-    - visited: /dev
-      redirect: /dev
-    - visited: /dev/about
-      redirect: /dev/about
-    - visited: /develop
-      redirect: /
-    - visited: /inbox
-      redirect: /inbox
-    - visited: /unknown
-      redirect: /
-  - roles:
-    - developer
-    - authenticated
-    routes:
-    - visited: /about
-      redirect: /about
-    - visited: /auth/session
-      redirect: /auth/session
-    - visited: /auth/signin
-      redirect: /
-    - visited: /auth
-      redirect: /
-    - visited: /auth/logout
-      redirect: /auth/logout
-    - visited: /
-      redirect: /
-    - visited: /users
-      redirect: /users
-    - visited: /users/child
-      redirect: /users/child
-    - visited: /userschild
-      redirect: /
-    - visited: /dev
-      redirect: /dev
-    - visited: /dev/about
-      redirect: /dev/about
-    - visited: /develop
-      redirect: /
-    - visited: /inbox
-      redirect: /inbox
-    - visited: /unknown
-      redirect: /
+  # - roles: "developer"
+  #   routes:
+  #   - visited: /about
+  #     redirect: /about
+  #   - visited: /auth/session
+  #     redirect: /auth/session
+  #   - visited: /auth/signin
+  #     redirect: /
+  #   - visited: /auth
+  #     redirect: /
+  #   - visited: /auth/logout
+  #     redirect: /auth/logout
+  #   - visited: /
+  #     redirect: /
+  #   - visited: /users
+  #     redirect: /
+  #   - visited: /users/child
+  #     redirect: /
+  #   - visited: /userschild
+  #     redirect: /
+  #   - visited: /dev
+  #     redirect: /dev
+  #   - visited: /dev/about
+  #     redirect: /dev/about
+  #   - visited: /develop
+  #     redirect: /
+  #   - visited: /inbox
+  #     redirect: /inbox
+  #   - visited: /unknown
+  #     redirect: /
+  # - roles:
+  #   - developer
+  #   - authenticated
+  #   routes:
+  #   - visited: /about
+  #     redirect: /about
+  #   - visited: /auth/session
+  #     redirect: /auth/session
+  #   - visited: /auth/signin
+  #     redirect: /
+  #   - visited: /auth
+  #     redirect: /
+  #   - visited: /auth/logout
+  #     redirect: /auth/logout
+  #   - visited: /
+  #     redirect: /
+  #   - visited: /users
+  #     redirect: /users
+  #   - visited: /users/child
+  #     redirect: /users/child
+  #   - visited: /userschild
+  #     redirect: /
+  #   - visited: /dev
+  #     redirect: /dev
+  #   - visited: /dev/about
+  #     redirect: /dev/about
+  #   - visited: /develop
+  #     redirect: /
+  #   - visited: /inbox
+  #     redirect: /inbox
+  #   - visited: /unknown
+  #     redirect: /

@@ -1,32 +1,23 @@
-import path from 'path'
-import preprocess from 'svelte-preprocess'
-import adapter from '@sveltejs/adapter-static'
+import path from 'path';
+import WindiCSS from 'vite-plugin-windicss';
+import adapter from '@sveltejs/adapter-auto';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	kit: {
+		adapter: adapter(),
+
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
-		adapter: adapter({
-			// default options are shown
-			pages: 'build',
-			assets: 'build',
-			fallback: 'index.html',
-		}),
 		vite: {
+			plugins: [WindiCSS()],
 			resolve: {
 				alias: {
-					$config: path.resolve('./src/config'),
-				},
-			},
-		},
-	},
+					$config: path.resolve('./src/config')
+				}
+			}
+		}
+	}
+};
 
-	preprocess: [
-		preprocess({
-			postcss: true,
-		}),
-	],
-}
-
-export default config
+export default config;

@@ -1,25 +1,20 @@
-import cookie from 'cookie'
-import { whereTo } from '@jerrythomas/sentry'
-import { routes } from './config'
+import { sessionFromCookies } from '@jerrythomas/sentry'
+import { sentry } from '$config'
 
-/** @type {import('@sveltejs/kit').Handle} */
-export async function handle({ request, resolve }) {
-  const cookies = cookie.parse(request.headers.cookie || '')
+export const handle = async ({ request, resolve }) => {
+	const session = sessionFromCookies(request)
 
-  request.locals = { ...cookies }
+	// TODO https://github.com/sveltejs/kit/issues/1046
+	if (request.query.has('_method')) {
+		request.method = request.query.get('_method').toUpperCase()
+	}
 
-  const response = await resolve(request)
-  const location = whereTo(routes, request.locals.lastLogin, request.path)
-
-  if (location != request.path) {
-    return { status: 302, headers: { location } }
-  }
-  return response
+	const response = await resolve(request)
+	console.log(request.path, sentry.protect(request.path, session))
+	return sentry.protect(request.path, session, response)
 }
 
 /** @type {import('@sveltejs/kit').GetSession} */
 export function getSession(request) {
-  return {
-    lastLogin: request.locals?.lastLogin,
-  }
+	return sessionFromCookies(request)
 }

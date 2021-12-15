@@ -1,23 +1,59 @@
-<script>
-  import { sentry } from '@jerrythomas/sentry/firebase'
-  $: user = $sentry.user
-
-  $: console.log($sentry.token)
-  $: avatar = user?.gravatar || '/favicon.png'
+<script context="module">
+	export const prerender = true;
 </script>
 
-<section
-  class="m-auto w-64 mt-10 flex flex-col space-y-2 items-center p-6 rounded-xl shadow">
-  <img src={avatar} alt="Svelte Firebase Auth" class="rounded-full shadow" />
-  <h1>Firebase Auth</h1>
+<script>
+	import Counter from '$lib/Counter.svelte';
+</script>
 
-  <div>{user?.name}</div>
-  <a
-    href="/login"
-    class="w-40 p-1 border rounded text-center hover:text-purple-700 bg-purple-100">Log
-    in</a>
-  <a
-    href="/logout"
-    class="w-40 p-1 border rounded text-center hover:text-purple-700 bg-purple-100">Log
-    out</a>
+<svelte:head>
+	<title>Home</title>
+</svelte:head>
+
+<section>
+	<h1>
+		<div class="welcome">
+			<picture>
+				<source srcset="svelte-welcome.webp" type="image/webp" />
+				<img src="svelte-welcome.png" alt="Welcome" />
+			</picture>
+		</div>
+
+		to your new<br />SvelteKit app
+	</h1>
+
+	<h2>
+		try editing <strong>src/routes/index.svelte</strong>
+	</h2>
+
+	<Counter />
 </section>
+
+<style>
+	section {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		flex: 1;
+	}
+
+	h1 {
+		width: 100%;
+	}
+
+	.welcome {
+		position: relative;
+		width: 100%;
+		height: 0;
+		padding: 0 0 calc(100% * 495 / 2048) 0;
+	}
+
+	.welcome img {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		display: block;
+	}
+</style>

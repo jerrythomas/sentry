@@ -1,8 +1,4 @@
-import { writable } from 'svelte/store'
-import { goto, invalidate } from '$app/navigation'
 import { initializeApp, getApps, getApp } from 'firebase/app'
-import { setCookie } from './utils'
-
 import {
 	signInWithPopup,
 	signOut,
@@ -25,90 +21,51 @@ const authProviders = {
 	yahoo: () => new OAuthProvider('yahoo')
 }
 
-function createSentry() {
-	const { subscribe, set } = writable({})
+export function adapter(config) {
+	const firebaseApp = getApps().length == 0 ? initializeApp(config) : getApp()
+	const firebaseAuth = getAuth(firebaseApp)
 
-	let app
-	let auth
-	let homePage = '/'
-	let startPage = '/home'
-	let paused = false
+	let currentUser = {}
 
-	function init(config, routes) {
-		reset()
-		app = getApps().length == 0 ? initializeApp(config) : getApp()
-		auth = getAuth(app)
-		homePage = routes.home
-		startPage = routes.start
-	}
+	const adapterFirebase = {
+		auth: {
+			user: () => currentUser,
+			signIn: async (credentials, options) => {
+				const authProvider = authProviders[credentials.provider]()
+				options.scopes.split(' ').map((scope) => authProvider.addScope(scope))
+				options.params.map((param) => authProvider.setCustomParameters(param))
 
-	function reset() {
-		set({ user: {}, token: null })
-	}
-
-	async function watch() {
-		onAuthStateChanged(auth, async (user) => {
-			if (!paused) onChange({ user })
-		})
-	}
-
-	function getLoginHandler(provider, scopes = [], params = []) {
-		const authProvider = authProviders[provider]()
-		scopes.map((scope) => authProvider.addScope(scope))
-		params.map((param) => authProvider.setCustomParameters(param))
-
-		const login = async () => {
-			paused = true
-			const result = await signInWithPopup(auth, authProvider)
-			if (result.user) {
-				await onChange(result, true)
+				const result = await signInWithPopup(firebaseAuth, authProvider)
+				currentUser = getUserInfo(result.user)
+			},
+			signOut: async () => await signOut(firebaseAuth),
+			onAuthStateChange: async (cb) => {
+				console.log('auth change called', cb)
+				onAuthStateChanged(firebaseAuth, async (user) => {
+					const event = user ? 'SIGNED_IN' : 'SIGNED_OUT'
+					let userData = getUserInfo(user)
+					if (currentUser !== userData) {
+						console.log('Firebase auth changed', currentUser, userData, cb)
+						currentUser = userData
+						await cb(event, userData ? { user: userData } : null)
+					}
+				})
 			}
 		}
-		return login
 	}
 
-	async function logout() {
-		paused = true
-		await signOut(auth)
-		await onChange()
-	}
-
-	async function onChange(result, refresh = false) {
-		let user = {}
-		let token = null
-		let register = null
-		let loggedIn = false
-
-		if (result && result.user) {
-			user = {
-				name: result.user.displayName,
-				avatar: result.user.photoURL,
-				email: result.user.email,
-				emailVerified: result.user.emailVerified,
-				domain: result.user.email.split('@')[1],
-				id: result.user.uid
-			}
-			const credential = OAuthProvider.credentialFromResult(result)
-			if (credential) token = credential.accessToken
-			loggedIn = true
-
-			if (refresh) register = { ...user }
-		}
-
-		await setCookie(user)
-		set({ user, loggedIn, token, register })
-		paused = false
-		redirect(user.id ? homePage : startPage)
-	}
-
-	function redirect(path) {
-		if (window.location.pathname != path) {
-			invalidate(path)
-			goto(path)
-		}
-	}
-
-	return { subscribe, init, getLoginHandler, logout, watch }
+	return adapterFirebase
 }
 
-export const sentry = createSentry()
+function getUserInfo(data) {
+	if (!data) return data
+
+	let user = data
+	user.id = user.uid
+	user.role = data ? 'authenticated' : ''
+	user.name = user.displayName
+
+	delete user.displayName
+	delete user.uid
+	return user
+}

@@ -3,6 +3,13 @@
 	import '../app.css'
 
 	import Header from '$lib/header/Header.svelte'
+
+	import { sentry } from '$config'
+	import { onMount } from 'svelte'
+
+	onMount(async () => {
+		await sentry.handleAuthChange()
+	})
 </script>
 
 <Header />

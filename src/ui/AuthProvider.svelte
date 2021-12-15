@@ -1,4 +1,8 @@
 <script>
+	import { createEventDispatcher } from 'svelte'
+
+	const dispatch = createEventDispatcher()
+
 	import Icon from './Icon.svelte'
 	import { icons } from '../icons'
 	import IconButton from './IconButton.svelte'
@@ -8,25 +12,39 @@
 	export let label
 	export let authUrl
 
+	function handleAuth() {
+		dispatch('submit', { provider })
+	}
 	$: title = label.toLowerCase() === provider ? 'Continue with ' + label : label
 </script>
 
-<form
-	method="post"
-	action={authUrl}
-	class="flex flex-row w-full leading-loose h-11 text-lg"
->
-	<input type="hidden" name="provider" value={provider} />
-	{#if provider === 'magic'}
-		<IconInput type="email" name="email" placeholder={label}>
-			<Icon icon={icons[provider]} slot="icon" />
-		</IconInput>
-	{:else}
+{#if authUrl}
+	<form
+		method="post"
+		action={authUrl}
+		class="flex flex-row w-full leading-loose h-11 text-lg"
+	>
+		<input type="hidden" name="provider" value={provider} />
+		{#if provider === 'magic'}
+			<IconInput type="email" name="email" placeholder={label}>
+				<Icon icon={icons[provider]} slot="icon" />
+			</IconInput>
+		{:else}
+			<IconButton type="submit" label={title} class={provider}>
+				<Icon icon={icons[provider]} slot="icon" />
+			</IconButton>
+		{/if}
+	</form>
+{:else}
+	<form
+		on:submit|preventDefault={handleAuth}
+		class="flex flex-row w-full leading-loose h-11 text-lg"
+	>
 		<IconButton type="submit" label={title} class={provider}>
 			<Icon icon={icons[provider]} slot="icon" />
 		</IconButton>
-	{/if}
-</form>
+	</form>
+{/if}
 
 <style lang="postcss">
 	:global(.google) {

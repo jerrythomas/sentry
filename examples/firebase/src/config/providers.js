@@ -1,14 +1,10 @@
 export const providers = [
-	{
-		provider: 'google',
-		label: 'Google',
-		scopes: [],
-		params: [],
-	},
+	// { provider: 'magic', label: 'email for Magic Link', scopes: [], params: [] },
+	{ provider: 'google', label: 'Google', scopes: [], params: [] },
 	{
 		provider: 'microsoft',
 		label: 'Microsoft',
 		scopes: [],
-		params: [{ prompt: 'consent', domain_hint: 'organizations' }],
-	},
+		params: [{ prompt: 'consent', domain_hint: 'organizations' }]
+	}
 ]
