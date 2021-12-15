@@ -8,7 +8,8 @@ import {
 	GithubAuthProvider,
 	TwitterAuthProvider,
 	FacebookAuthProvider,
-	OAuthProvider
+	OAuthProvider,
+	sendSignInLinkToEmail
 } from 'firebase/auth'
 
 const authProviders = {
@@ -31,12 +32,19 @@ export function adapter(config) {
 		auth: {
 			user: () => currentUser,
 			signIn: async (credentials, options) => {
-				const authProvider = authProviders[credentials.provider]()
-				options.scopes.split(' ').map((scope) => authProvider.addScope(scope))
-				options.params.map((param) => authProvider.setCustomParameters(param))
+				if (credentials.provider === 'magic') {
+					await sendSignInLinkToEmail(firebaseAuth, credentials.email, {
+						url: options.redirectTo,
+						handleCodeInApp: true
+					})
+				} else {
+					const authProvider = authProviders[credentials.provider]()
+					options.scopes.split(' ').map((scope) => authProvider.addScope(scope))
+					options.params.map((param) => authProvider.setCustomParameters(param))
 
-				const result = await signInWithPopup(firebaseAuth, authProvider)
-				currentUser = getUserInfo(result.user)
+					const result = await signInWithPopup(firebaseAuth, authProvider)
+					currentUser = getUserInfo(result.user)
+				}
 			},
 			signOut: async () => await signOut(firebaseAuth),
 			onAuthStateChange: async (cb) => {
@@ -60,10 +68,12 @@ export function adapter(config) {
 function getUserInfo(data) {
 	if (!data) return data
 
-	let user = data
-	user.id = user.uid
-	user.role = data ? 'authenticated' : ''
-	user.name = user.displayName
+	let user = {
+		...data,
+		id: data.uid,
+		role: 'authenticated',
+		name: data.displayName
+	}
 
 	delete user.displayName
 	delete user.uid

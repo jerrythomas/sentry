@@ -63,6 +63,8 @@ function createSentry() {
 
 	async function handleAuthChange() {
 		adapter.auth.onAuthStateChange(async (event, session) => {
+			await updateSession(event, session)
+
 			if (session) {
 				set({ user: session.user })
 				router.authRoles = session.user.role
@@ -70,8 +72,8 @@ function createSentry() {
 				set({ user: {} })
 				router.authRoles = ''
 			}
-			await updateSession(event, session)
-			window.location.pathname = router.redirect(window.location.pathname)
+			const detour = router.redirect(window.location.pathname)
+			if (detour !== window.location.pathname) window.location.pathname = detour
 		})
 	}
 

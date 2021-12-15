@@ -19,7 +19,7 @@ This is an attempt to make adding authentication to SvelteKit apps as simple as 
 
 - [x] Configuration driven
 - [x] Secrets using environment variables
-- [ ] Emulator tests where available
+- [x] Unit tests
 - [x] Route protection
   - [x] Public pages
   - [x] Protected routes
@@ -37,6 +37,10 @@ This is an attempt to make adding authentication to SvelteKit apps as simple as 
   - [ ] Github
   - [ ] Twitter
   - [ ] Facebook
+- [ ] Examples with protected routes and data operations
+  - [ ] Supabase
+  - [ ] Firebase
+- [ ] Emulator tests where available
 
 ## Getting started
 
@@ -68,10 +72,10 @@ This library uses WindiCSS and the components will not render properly if the ta
 
 ```js
 extract: {
-	include: [
-		'./src/**/*.{html,js,svelte,ts}',
-		'node_modules/@jerrythomas/sentry/src/**/*.{html,js,svelte,ts,css}}'
-	]
+  include: [
+    './src/**/*.{html,js,svelte,ts}',
+    'node_modules/@jerrythomas/sentry/src/**/*.{html,js,svelte,ts,css}}'
+  ]
 }
 ```
 

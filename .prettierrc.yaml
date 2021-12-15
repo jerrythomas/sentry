@@ -5,3 +5,7 @@ semi: false
 singleQuote: true
 trailingComma: none
 svelteSortOrder: options-scripts-markup-styles
+overrides:
+  - files: "*.md"
+    options:
+      useTabs: false

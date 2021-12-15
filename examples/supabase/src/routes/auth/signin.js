@@ -12,7 +12,10 @@ export async function post(request) {
 		Object.fromEntries(request.query.entries()),
 		Object.fromEntries(request.body.entries())
 	)
-	const { error, email, provider } = await sentry.handleSignIn(params)
+	const { error, email, provider } = await sentry.handleSignIn(
+		params,
+		request.headers.origin
+	)
 
 	if (error) {
 		status = 'E001'

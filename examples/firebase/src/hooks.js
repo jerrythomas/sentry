@@ -10,7 +10,6 @@ export const handle = async ({ request, resolve }) => {
 	}
 
 	const response = await resolve(request)
-	console.log(request.path, sentry.protect(request.path, session))
 	return sentry.protect(request.path, session, response)
 }
 

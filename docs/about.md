@@ -20,12 +20,12 @@ The example uses default routes. This can be overridden by specifying configurin
 {
    auth: {
        page: {
-          login: “/auth”,
-          logout: “/auth/logout”
+          login: '/auth',
+          logout: '/auth/logout'
        },
        endpoint: {
-          session: “/auth/session“,
-          authenticate: “/auth/sign-in”
+          session: '/auth/session',
+          authenticate: '/auth/sign-in'
        }
    }
 }
@@ -45,3 +45,26 @@ The following rules are applied for route handling.
 - A private or restricted route under an allowed route is not currently supported
 - logout route is only allowed after authentication
 - All restricted routes will be rerouted to the the home route if authenticated and to the login route otherwise
+
+## Adapters
+
+Different auth libraries implement auth functions in different ways. Sentry provides a wrapper over the auth functions including route protections.
+
+- Sentry can be used with supabase client as is
+- A firebase adapter mimicks the supabase approach
+
+## Todo
+
+- Test a few social auths on supabase
+- Test magic link on firebase
+- Fix the todo flows on firebase/supabase example
+- Fix sample UI
+- Fix error messages (rate limit on supabase)
+
+## Following work
+
+- Supabase
+  - Magic Link
+- Firebase
+  - Google
+  - Microsoft

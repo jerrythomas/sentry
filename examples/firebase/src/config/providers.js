@@ -1,5 +1,5 @@
 export const providers = [
-	// { provider: 'magic', label: 'email for Magic Link', scopes: [], params: [] },
+	{ provider: 'magic', label: 'email for Magic Link', scopes: [], params: [] },
 	{ provider: 'google', label: 'Google', scopes: [], params: [] },
 	{
 		provider: 'microsoft',

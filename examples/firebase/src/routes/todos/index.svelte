@@ -8,7 +8,7 @@
 		if (res.ok) {
 			const result = await res.json()
 			return {
-				props: { session, todos: result.data }
+				props: { todos: result.data }
 			}
 		}
 
@@ -24,7 +24,7 @@
 	import { flip } from 'svelte/animate'
 	import { sentry } from '$config'
 
-	export let session = {}
+	// export let session = {}
 	export let todos = []
 
 	async function patch(res) {
