@@ -45,25 +45,25 @@ RouterSuite('Should work with defaults', (context) => {
 })
 
 RouterSuite('Should handle different options', (context) => {
-	context.config.forEach(({ options, expected }) => {
+	context.config.forEach(({ options, expected, message }) => {
 		let router = new Router(options)
 		Object.keys(expected).forEach((key) => {
-			assert.equal(router[key], expected[key])
+			assert.equal(router[key], expected[key], message)
 		})
 	})
 })
 
 RouterSuite('Should set allowedRoutes', (context) => {
-	const { options, expected, data } = context.roles
+	const { options, message, expected, data } = context.roles
 	let router = new Router(options)
 
 	Object.keys(expected).forEach((key) => {
-		assert.equal(router[key], expected[key])
+		assert.equal(router[key], expected[key], message)
 	})
 
-	data.forEach(({ roles, routes }) => {
+	data.forEach(({ roles, routes, message }) => {
 		router.authRoles = roles
-		assert.equal(router.allowedRoutes, routes)
+		assert.equal(router.allowedRoutes, routes, message)
 	})
 })
 
@@ -71,11 +71,11 @@ RouterSuite('Should fallback on allowed routes', (context) => {
 	const { options, data } = context.redirect
 	let router = new Router(options)
 
-	data.forEach(({ roles, routes }) => {
+	data.forEach(({ roles, routes, message }) => {
 		router.authRoles = roles
 		routes.forEach(({ visited, redirect }) => {
 			const fallback = router.redirect(visited)
-			assert.equal(fallback, redirect)
+			assert.equal(fallback, redirect, message)
 		})
 	})
 })

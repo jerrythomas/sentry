@@ -1,8 +1,10 @@
+import fs from 'fs'
+import yaml from 'js-yaml'
 import { suite } from 'uvu'
 import * as assert from 'uvu/assert'
 import { sentry } from '../src/sentry.js'
 import fetchMock from 'fetch-mock'
-import { adapter, ERROR_EMAIL } from './mock/adapter.js'
+import { adapter } from './mock/adapter.js'
 
 const VALID_EMAIL = 'john@doe@example.com'
 
@@ -10,6 +12,13 @@ const SentrySuite = suite('Sentry wrapper for auth')
 
 SentrySuite.before(async (context) => {
 	global.window = { location: { href: '', pathname: '/' } }
+	try {
+		context.authProviders = yaml.load(
+			fs.readFileSync('spec/fixtures/providers.yaml', 'utf8')
+		)
+	} catch (err) {
+		console.error(err)
+	}
 
 	context.providers = [
 		{ provider: 'magic' },
@@ -18,126 +27,32 @@ SentrySuite.before(async (context) => {
 	context.adapter = adapter
 })
 
-SentrySuite('Should handle sign in with magic link', async (context) => {
-	const data = [
-		{ mode: 'query', email: VALID_EMAIL, provider: 'magic' },
-		{ mode: 'query', email: ERROR_EMAIL, provider: 'magic' },
-		{ mode: 'body', email: VALID_EMAIL, provider: 'magic' },
-		{ mode: 'body', email: ERROR_EMAIL, provider: 'magic' }
-	]
+SentrySuite('Should handle different providers', async (context) => {
 	let calls = []
 	let count = 0
 	let unsubscribe = sentry.subscribe((data) => {
 		if (count === 1) assert.equal(data.user, {})
 		count++
 	})
-	sentry.init({ adapter: context.adapter })
+	sentry.init({ adapter: context.adapter, providers: context.providers })
 	assert.equal(context.adapter.calls(), [{ function: 'user', user: {} }])
 	assert.equal(sentry.routes(), { authUrl: '/auth/signin', loginUrl: '/auth' })
 
 	context.adapter.clearCalls()
 	unsubscribe()
 
-	data.map(async ({ mode, email, provider }) => {
-		calls.push({
-			function: 'signIn',
-			credentials: { email },
-			options: {
-				redirectTo: 'http://localhost:3000/auth',
-				scopes: '',
-				params: []
-			}
-		})
-		const params = new URLSearchParams({ email, provider })
-		const result = await sentry.handleSignIn({
-			query: mode === 'query' ? params : new URLSearchParams({}),
-			body: mode !== 'query' ? params : new URLSearchParams({}),
-			headers: { origin: 'http://localhost:3000' }
-		})
-		if (email === VALID_EMAIL) {
-			assert.not(result.error)
-		} else {
-			assert.is.not(result.error)
+	context.authProviders.map(
+		async ({ credentials, message, expected, call }) => {
+			if (call) calls.push(call)
+			const result = await sentry.handleSignIn(
+				credentials,
+				'http://localhost:3000'
+			)
+			assert.equal(result, expected, message)
 		}
-		assert.equal(result.email, email)
-		assert.equal(result.provider, provider)
-	})
-	assert.equal(context.adapter.calls(), calls)
-
-	context.adapter.clearCalls()
-})
-
-SentrySuite('Should handle other sign in methods', async (context) => {
-	const data = [
-		{ mode: 'query', provider: 'google' },
-		{ mode: 'body', provider: 'google' }
-	]
-	let calls = []
-	let count = 0
-	let unsubscribe = sentry.subscribe((data) => {
-		if (count === 1) assert.equal(data.user, {})
-		count++
-	})
-	sentry.init({
-		adapter: context.adapter,
-		providers: context.providers
-	})
-	assert.equal(context.adapter.calls(), [{ function: 'user', user: {} }])
-	context.adapter.clearCalls()
-	unsubscribe()
-
-	data.map(async ({ mode, email, provider }) => {
-		calls.push({
-			function: 'signIn',
-			credentials: { provider },
-			options: {
-				redirectTo: 'http://localhost:3000/auth',
-				scopes: context.providers
-					.filter((d) => d.provider === 'google')[0]
-					.scopes.join(' '),
-				params: []
-			}
-		})
-
-		const params = new URLSearchParams({ email, provider })
-		const result = await sentry.handleSignIn({
-			query: mode === 'query' ? params : new URLSearchParams({}),
-			body: mode !== 'query' ? params : new URLSearchParams({}),
-			headers: { origin: 'http://localhost:3000' }
-		})
-		assert.is.not(result.email)
-		assert.equal(result.provider, provider)
-	})
+	)
 
 	assert.equal(context.adapter.calls(), calls)
-	context.adapter.clearCalls()
-})
-
-SentrySuite('Should fail when provider is not configured', async (context) => {
-	const data = [{ mode: 'query', provider: 'unknown' }]
-	let count = 0
-	let unsubscribe = sentry.subscribe((data) => {
-		if (count === 1) assert.equal(data.user, {})
-		count++
-	})
-	sentry.init({ adapter: context.adapter })
-	assert.equal(context.adapter.calls(), [{ function: 'user', user: {} }])
-	context.adapter.clearCalls()
-	unsubscribe()
-
-	data.map(async ({ mode, email, provider }) => {
-		const params = new URLSearchParams({ email, provider })
-		const result = await sentry.handleSignIn({
-			query: mode === 'query' ? params : new URLSearchParams({}),
-			body: mode !== 'query' ? params : new URLSearchParams({}),
-			headers: { origin: 'http://localhost:3000' }
-		})
-		assert.equal(result.error, 'Provider has not been configured.')
-		assert.is.not(result.email)
-		assert.equal(result.provider, provider)
-	})
-
-	assert.equal(context.adapter.calls(), [])
 })
 
 SentrySuite('Should handle auth change', async (context) => {

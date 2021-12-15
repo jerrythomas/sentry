@@ -14,7 +14,7 @@ function createSentry() {
 	function init(config) {
 		router = new Router(config.routes)
 		adapter = config.adapter
-		providers = (config.providers || [{ provider: 'magic' }]).reduce(
+		providers = config.providers.reduce(
 			(obj, cur) => ({
 				...obj,
 				[cur.provider]: {
@@ -28,26 +28,22 @@ function createSentry() {
 		set({ user: adapter.auth.user(), token: null })
 	}
 
-	async function handleSignIn(request) {
-		const params = Object.assign(
-			Object.fromEntries(request.query.entries()),
-			Object.fromEntries(request.body.entries())
-		)
-
-		const { email, provider } = params
-
-		if (!(provider in providers)) {
-			return { error: 'Provider has not been configured.', email, provider }
+	async function handleSignIn(params, baseUrl) {
+		if (!(params.provider in providers)) {
+			return { error: 'Provider has not been configured.', params }
 		}
-		const credentials = provider === 'magic' ? { email } : { provider }
+		const credentials =
+			params.provider === 'magic'
+				? { email: params.email }
+				: { provider: params.provider }
 		const options = {
-			redirectTo: request.headers.origin + router.auth.pages.login,
-			scopes: providers[provider].scopes.join(' '),
-			params: providers[provider].params
+			redirectTo: baseUrl + router.auth.pages.login,
+			scopes: providers[params.provider].scopes.join(' '),
+			params: providers[params.provider].params
 		}
 
 		const { error } = await adapter.auth.signIn(credentials, options)
-		return { error, email, provider, options }
+		return { error, params, options }
 	}
 
 	async function handleSignOut() {

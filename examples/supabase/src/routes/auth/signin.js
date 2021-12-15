@@ -8,8 +8,11 @@ import { sentry } from '$config'
 export async function post(request) {
 	let status = 'S001'
 	const { loginUrl } = sentry.routes()
-
-	const { error, email, provider } = await sentry.handleSignIn(request)
+	const params = Object.assign(
+		Object.fromEntries(request.query.entries()),
+		Object.fromEntries(request.body.entries())
+	)
+	const { error, email, provider } = await sentry.handleSignIn(params)
 
 	if (error) {
 		status = 'E001'

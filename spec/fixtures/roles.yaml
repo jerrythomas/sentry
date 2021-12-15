@@ -7,7 +7,7 @@ options:
     developer:
     - /dev
     - /inbox
-
+message: Should handle additional roles based routes
 expected:
   home: /
   auth:
@@ -39,6 +39,7 @@ data:
     routes:
     - /about
     - /auth
+    message: Should set allowed routes for "public"
   - roles: authenticated
     routes:
     - /
@@ -47,6 +48,7 @@ data:
     - /auth/logout
     - /auth/session
     - /users
+    message: Should set allowed routes for "authenticated"
   - roles: developer
     routes:
     - /
@@ -55,6 +57,7 @@ data:
     - /auth/session
     - /dev
     - /inbox
+    message: Should set allowed routes for "developer"
   - roles:
     - developer
     - authenticated
@@ -67,3 +70,4 @@ data:
     - /dev
     - /inbox
     - /users
+    message: Should set allowed routes for "developer" & "authenticated"
