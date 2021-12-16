@@ -22,28 +22,6 @@ RouterSuite.before(async (context) => {
 	}
 })
 
-RouterSuite('Should work with defaults', (context) => {
-	let router = new Router()
-
-	assert.equal(router.home, '/')
-	assert.equal(router.auth, {
-		pages: { login: '/auth', logout: '/auth/logout' },
-		endpoints: { signIn: '/auth/signin', session: '/auth/session' }
-	})
-	// assert.equal(router.login, '/auth')
-	// assert.equal(router.logout, '/auth/logout')
-	// assert.equal(router.endpoints, {
-	// 	signIn: '/auth/signin',
-	// 	sessionCookie: '/auth/session'
-	// })
-	assert.not(router.isAuthenticated)
-
-	assert.equal(router.byRole, {
-		public: ['/auth'],
-		authenticated: ['/']
-	})
-})
-
 RouterSuite('Should handle different options', (context) => {
 	context.config.forEach(({ options, expected, message }) => {
 		let router = new Router(options)
@@ -61,9 +39,10 @@ RouterSuite('Should set allowedRoutes', (context) => {
 		assert.equal(router[key], expected[key], message)
 	})
 
-	data.forEach(({ roles, routes, message }) => {
+	data.forEach(({ roles, routes, message, isAuthenticated }) => {
 		router.authRoles = roles
 		assert.equal(router.allowedRoutes, routes, message)
+		assert.equal(router.isAuthenticated, isAuthenticated, message)
 	})
 })
 

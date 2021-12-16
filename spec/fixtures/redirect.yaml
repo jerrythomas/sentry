@@ -1,5 +1,5 @@
 options:
-  byRole :
+  routes :
     public:
     - /about
     authenticated:

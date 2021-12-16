@@ -1,5 +1,5 @@
 options:
-  byRole :
+  routes :
     public:
     - /about
     authenticated:
@@ -7,22 +7,14 @@ options:
     developer:
     - /dev
     - /inbox
-message: Should handle additional roles based routes
+message: Should handle additional role based routes
 expected:
   home: /
-  auth:
-      pages:
-        login: /auth
-        logout: /auth/logout
-      endpoints:
-        signIn: /auth/signin
-        session: /auth/session
-  # login: /auth
-  # logout: /auth/logout
-  # endpoints:
-  #   signIn: /auth/signin
-  #   sessionCookie: /auth/session
-  byRole:
+  login: /auth
+  logout: /auth/logout
+  authUrl: /auth/signin
+  session: /auth/session
+  routes:
     public:
     - /about
     - /auth
@@ -36,20 +28,22 @@ expected:
 
 data:
   - roles: ""
+    isAuthenticated: false
     routes:
     - /about
     - /auth
     message: Should set allowed routes for "public"
   - roles: authenticated
+    isAuthenticated: true
     routes:
     - /
     - /about
-    # - /auth
     - /auth/logout
     - /auth/session
     - /users
     message: Should set allowed routes for "authenticated"
   - roles: developer
+    isAuthenticated: true
     routes:
     - /
     - /about
@@ -61,10 +55,10 @@ data:
   - roles:
     - developer
     - authenticated
+    isAuthenticated: true
     routes:
     - /
     - /about
-    # - /auth
     - /auth/logout
     - /auth/session
     - /dev

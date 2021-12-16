@@ -18,16 +18,12 @@ The example uses default routes. This can be overridden by specifying configurin
 
 ```javascript
 {
-   auth: {
-       page: {
-          login: '/auth',
-          logout: '/auth/logout'
-       },
-       endpoint: {
-          session: '/auth/session',
-          authenticate: '/auth/sign-in'
-       }
-   }
+  auth: {
+    login: '/auth',
+    logout: '/auth/logout'
+    session: '/auth/session',
+    authenticate: '/auth/sign-in'
+  }
 }
 
 ```

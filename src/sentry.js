@@ -37,7 +37,7 @@ function createSentry() {
 				? { email: params.email }
 				: { provider: params.provider }
 		const options = {
-			redirectTo: baseUrl + router.auth.pages.login,
+			redirectTo: baseUrl + router.login,
 			scopes: providers[params.provider].scopes.join(' '),
 			params: providers[params.provider].params
 		}
@@ -49,7 +49,7 @@ function createSentry() {
 	async function handleSignOut() {
 		await adapter.auth.signOut()
 		await updateSession()
-		window.location.pathname = router.auth.pages.login
+		window.location.pathname = router.login
 	}
 
 	function protect(route, session, response) {
@@ -78,7 +78,7 @@ function createSentry() {
 	}
 
 	async function updateSession(event, session) {
-		await fetch(router.auth.endpoints.session, {
+		await fetch(router.session, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			credentials: 'same-origin',
@@ -88,8 +88,8 @@ function createSentry() {
 
 	function routes() {
 		return {
-			authUrl: router.auth.endpoints.signIn,
-			loginUrl: router.auth.pages.login
+			authUrl: router.authUrl,
+			loginUrl: router.login
 		}
 	}
 

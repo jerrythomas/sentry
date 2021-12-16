@@ -1,40 +1,43 @@
 ---
+- options: ~
+  message: Should handle default options
+  expected:
+    home: /
+    login: /auth
+    logout: /auth/logout
+    authUrl: /auth/signin
+    session: /auth/session
+    isAuthenticated: false
+    routes:
+      public:
+      - /auth
+      authenticated:
+      - /
+
 - options:
     home: /home
-    auth:
-      pages:
-        login: /signIn
+    login: /signIn
   message: Should handle different home and login path
   expected:
     home: /home
-    auth:
-      pages:
-        login: /signIn
-        logout: /auth/logout
-      endpoints:
-        signIn: /auth/signin
-        session: /auth/session
-    byRole:
+    login: /signIn
+    logout: /auth/logout
+    authUrl: /auth/signin
+    session: /auth/session
+    routes:
       public:
       - /auth/session
       - /auth/signin
-      # - /auth/logout
       - /signIn
       authenticated:
       - /home
 
 - options:
     home: /home
-    auth:
-      pages:
-        login: /signIn
-        logout: /signOut
-      endpoints:
-        signIn: /auth/login
-        # session: /auth/session
-        # login: /signIn
-    # logout: /signOut
-    byRole:
+    login: /signIn
+    logout: /signOut
+    authUrl: /auth/login
+    routes:
       public:
       - /
       - /auth/login
@@ -45,16 +48,11 @@
   message: Should handle different logout page & signIn endpoint
   expected:
     home: /home
-    auth:
-      pages:
-        login: /signIn
-        logout: /signOut
-      endpoints:
-        signIn: /auth/login
-        session: /auth/session
-    # login: /signIn
-    # logout: /signOut
-    byRole:
+    login: /signIn
+    logout: /signOut
+    authUrl: /auth/login
+    session: /auth/session
+    routes:
       public:
       - /
       - /auth/login
@@ -65,31 +63,21 @@
       - /me
 
 - options:
-    auth:
-      pages:
-        login: /signIn
-        logout: /signOut
-      endpoints:
-        signIn: /auth/login
-        session: /auth/cookie
-    # login: /signIn
-    # logout: /signOut
-    byRole:
+    login: /signIn
+    logout: /signOut
+    authUrl: /auth/login
+    session: /auth/cookie
+    routes:
       public:
       - /
   message: Should handle different session endpoint
   expected:
     home: /
-    auth:
-      pages:
-        login: /signIn
-        logout: /signOut
-      endpoints:
-        signIn: /auth/login
-        session: /auth/cookie
-    # login: /signIn
-    # logout: /signOut
-    byRole:
+    login: /signIn
+    logout: /signOut
+    authUrl: /auth/login
+    session: /auth/cookie
+    routes:
       public:
       - /
       - /auth/cookie
@@ -100,32 +88,22 @@
 
 - options:
     home: /
-    auth:
-      pages:
-        login: /signIn
-        logout: /signOut
-      endpoints:
-        signIn: /auth/signin
-        session: /auth/session
-    # login: /signIn
-    # logout: /signOut
-    byRole:
+    login: /signIn
+    logout: /signOut
+    authUrl: /auth/signin
+    session: /auth/session
+    routes:
       public:
       - /
       - /home
   message: Should handle additional public routes
   expected:
     home: /
-    auth:
-      pages:
-        login: /signIn
-        logout: /signOut
-      endpoints:
-        signIn: /auth/signin
-        session: /auth/session
-    # login: /signIn
-    # logout: /signOut
-    byRole:
+    login: /signIn
+    logout: /signOut
+    authUrl: /auth/signin
+    session: /auth/session
+    routes:
       public:
       - /
       - /auth/session
