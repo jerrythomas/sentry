@@ -84,8 +84,8 @@
 		background-color: #55acee;
 		color: #ffffff;
 	}
-	:global(.magic) {
+	/* :global(.magic) {
 		background-color: #ffffff;
 		color: #333333;
-	}
+	} */
 </style>
