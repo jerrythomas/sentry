@@ -33,7 +33,7 @@ export function cookiesFromSession(session) {
 			maxAge: 3600
 		})
 	)
-
+	// console.log('session user', user?.email, user?.role)
 	return {
 		status: 200,
 		headers: {

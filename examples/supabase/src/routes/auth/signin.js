@@ -12,7 +12,7 @@ export async function post(request) {
 		Object.fromEntries(request.query.entries()),
 		Object.fromEntries(request.body.entries())
 	)
-	const { error, email, provider } = await sentry.handleSignIn(
+	const { error, params } = await sentry.handleSignIn(
 		params,
 		request.headers.origin
 	)
@@ -29,7 +29,7 @@ export async function post(request) {
 		return {
 			status: 303,
 			headers: {
-				location: `${loginUrl}?email=${email}&provider=${provider}&status=${status}`
+				location: `${loginUrl}?email=${params.email}&provider=${params.provider}&status=${status}`
 			}
 		}
 	}
