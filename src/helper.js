@@ -9,7 +9,6 @@ export function sessionFromCookies(request) {
 	const keys = ['id', 'email', 'role']
 	let session = {}
 
-	// ramda pick?
 	keys.map((key) => {
 		session[key] = key in cookies ? cookies[key] : ''
 	})
