@@ -47,8 +47,7 @@
   },
   "homepage": "https://github.com/jerrythomas/sentry#readme",
   "devDependencies": {
-    "@firebase/app-types": "0.6.2",
-    "@sveltejs/kit": "^1.0.0-next.216",
+    "@supabase/supabase-js": "^1.29.1",
     "auto-changelog": "^2.3.0",
     "autoprefixer": "^10.4.1",
     "c8": "^7.11.0",
@@ -56,13 +55,13 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-svelte3": "^3.2.1",
     "fetch-mock": "^9.11.0",
+    "firebase": "^9.6.2",
     "js-yaml": "^4.1.0",
     "postcss": "^8.4.5",
     "prettier": "^2.5.1",
     "release-it": "^14.11.8",
+    "supabase": "^0.5.0",
     "svelte": "^3.44.3",
-    "svelte-preprocess": "^4.10.1",
-    "svelte-windicss-preprocess": "^4.2.5",
     "uvu": "^0.5.3",
     "windicss": "^3.4.2"
   },
@@ -71,11 +70,5 @@
   },
   "auto-changelog": {
     "unreleased": false
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^1.29.1",
-    "cookie": "^0.4.1",
-    "firebase": "^9.6.1",
-    "supabase": "^0.5.0"
   }
 }

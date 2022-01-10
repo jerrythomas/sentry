@@ -1,11 +1,38 @@
 import { suite } from 'uvu'
 import * as assert from 'uvu/assert'
-import { sessionFromCookies, cookiesFromSession } from '../src/helper.js'
+import {
+	sessionFromCookies,
+	cookiesFromSession,
+	hasAuthParams
+} from '../src/helper.js'
 
 const HelperSuite = suite('Helper functions')
 
 HelperSuite.before(async (context) => {
 	context.cookieProperties = 'Max-Age=3600; Path=/; HttpOnly; SameSite=Strict'
+	;(context.pathname = '/auth'), (context.origin = 'http://localhost:3000')
+	context.locations = [
+		{
+			href: 'http://localhost:3000/auth#access_token=abcd',
+			expected: true
+		},
+		{
+			href: 'http://localhost:3000/auth#type=other&access_token=abcd',
+			expected: true
+		},
+		{
+			href: 'http://localhost:3000/auth#access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNjQxNjk4MzI5LCJzdWIiOiI2MzUxMTdmZC0yMjY0LTQ3ZGEtYWYwZS1hY2RiN2ZmOGU5ZTUiLCJlbWFpbCI6ImplcnJ5LnRob21hc0BzZW5lY2FnbG9iYWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6e30sInJvbGUiOiJhdXRoZW50aWNhdGVkIn0.QhVMcq9qfSV4FmMTRik20dWzVUGltOfdCrbphRqW99w&expires_in=3600&refresh_token=dSsLeCJCof1knFRrv7aG4A&token_type=bearer&type=magiclink',
+			expected: true
+		},
+		{
+			href: 'http://localhost:3000/auth#',
+			expected: false
+		},
+		{
+			href: 'http://localhost:3000/auth?provider=magic',
+			expected: false
+		}
+	]
 })
 
 HelperSuite('Should extract session cookies from request', (context) => {
@@ -49,6 +76,17 @@ HelperSuite('Should create cookies from session', (context) => {
 		}
 		// console.log(session, cookies)
 		assert.equal(cookies, expected)
+	})
+})
+
+HelperSuite('Should identify url with auth params', (context) => {
+	context.locations.forEach(({ href, expected }) => {
+		const location = {
+			pathname: context.pathname,
+			origin: context.origin,
+			href
+		}
+		assert.equal(hasAuthParams(location), expected)
 	})
 })
 

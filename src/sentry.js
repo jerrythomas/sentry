@@ -1,9 +1,13 @@
 import { writable } from 'svelte/store'
 import { Router } from './router.js'
+import { hasAuthParams } from './helper.js'
+
+export let isAuthChanging = writable(false)
 
 function createSentry() {
 	const { subscribe, set } = writable({
 		user: {},
+		isAuthChanging: false,
 		token: null
 	})
 
@@ -62,7 +66,9 @@ function createSentry() {
 	}
 
 	async function handleAuthChange() {
+		isAuthChanging.set(hasAuthParams(window.location))
 		adapter.auth.onAuthStateChange(async (event, session) => {
+			isAuthChanging.set(true)
 			await updateSession(event, session)
 			if (session) {
 				set({ user: session.user })
@@ -73,6 +79,7 @@ function createSentry() {
 			}
 			const detour = router.redirect(window.location.pathname)
 			if (detour !== window.location.pathname) window.location.pathname = detour
+			isAuthChanging.set(false)
 		})
 	}
 
