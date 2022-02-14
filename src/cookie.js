@@ -3,6 +3,8 @@
  * Copyright(c) 2012-2014 Roman Shtylman
  * Copyright(c) 2015 Douglas Christopher Wilson
  * MIT Licensed
+ *
+ * Converted to ESM for use in SvelteKit apps
  */
 
 'use strict'
@@ -57,8 +59,8 @@ export function parse(str, options) {
 			continue
 		}
 
-		var key = pair.substr(0, eq_idx).trim()
-		var val = pair.substr(++eq_idx, pair.length).trim()
+		var key = pair.slice(0, eq_idx).trim()
+		var val = pair.slice(++eq_idx, pair.length).trim()
 
 		// quoted values
 		if ('"' == val[0]) {

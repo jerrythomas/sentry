@@ -1,4 +1,5 @@
 import { supabase } from '$config/auth'
+import { getRequestBody } from '$lib/task'
 
 const actions = {
 	get: async (entity, data) => await supabase.from(entity).select().match(data),
@@ -11,12 +12,12 @@ const actions = {
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function get(request) {
-	const { entity } = request.params
+export async function get({ params, request, url }) {
+	const { entity } = params
 
 	const { data, error, status } = await actions.get(
 		entity,
-		Object.fromEntries(request.query.entries())
+		Object.fromEntries(url.searchParams.entries())
 	)
 
 	if (error) return { status, body: error }
@@ -30,17 +31,10 @@ export async function get(request) {
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function post(request) {
-	const { entity } = request.params
-	const method = (request.query.get('method') || 'POST').toLowerCase()
-	let data
-
-	try {
-		data = Object.fromEntries(request.body.entries())
-	} catch (err) {
-		console.error('post', method, entity, err)
-		data = request.body
-	}
+export async function post({ params, url, request }) {
+	const { entity } = params
+	const method = (url.searchParams.get('method') || 'POST').toLowerCase()
+	let data = await getRequestBody(request)
 
 	const result = await actions[method](entity, data)
 
@@ -67,9 +61,10 @@ export async function post(request) {
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function put(request) {
-	const { entity } = request.params
-	const { data, error, status } = await actions.put(entity, request.body)
+export async function put({ params, request }) {
+	const { entity } = params
+	const body = await getRequestBody(request)
+	const { data, error, status } = await actions.put(entity, body)
 
 	if (error) return { status, body: error }
 
@@ -82,10 +77,11 @@ export async function put(request) {
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function del(request) {
-	const { entity } = request.params
-	console.log(entity, 'del', request.body)
-	const { data, error, status } = await actions.delete(entity, request.body)
+export async function del({ params, request }) {
+	const { entity } = params
+	// console.log(entity, 'del', request.body)
+	const body = await getRequestBody(request)
+	const { data, error, status } = await actions.delete(entity, body)
 
 	if (error) return { status, body: error }
 	return {

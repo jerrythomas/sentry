@@ -68,7 +68,7 @@ Take a look at the following files/folders in the sample to understand how it wo
 
 ### WindiCSS
 
-This library uses WindiCSS and the components will not render properly if the tailwind does not include the requires css classes. Ensure that the sentry library is included in the purge array of `windi.config.cjs`
+This library uses WindiCSS and the components will not render properly if the required classes are not included in the final bundle. Ensure that the sentry library is included in the extract configuration of `windi.config.js`
 
 ```js
 extract: {

@@ -5,10 +5,12 @@ import {
 	cookiesFromSession,
 	hasAuthParams
 } from '../src/helper.js'
+import { Headers } from './mock/headers.js'
 
 const HelperSuite = suite('Helper functions')
 
 HelperSuite.before(async (context) => {
+	global.Headers = Headers
 	context.cookieProperties = 'Max-Age=3600; Path=/; HttpOnly; SameSite=Strict'
 	;(context.pathname = '/auth'), (context.origin = 'http://localhost:3000')
 	context.locations = [
@@ -36,17 +38,33 @@ HelperSuite.before(async (context) => {
 })
 
 HelperSuite('Should extract session cookies from request', (context) => {
-	let session = sessionFromCookies({ headers: {} })
-	assert.equal(session, { id: '', email: '', role: '' })
+	let event = { request: { headers: new Headers({}) }, locals: {} }
+	let session = sessionFromCookies(event)
+	assert.equal(session, {})
 
 	const cookie =
 		'id=74758948-0f30-4388-baaf-1279bbe5ff0b; email=jane%40example.com; role=authenticated'
-
-	session = sessionFromCookies({ headers: { cookie } })
+	event.request.headers = new Headers({ cookie })
+	session = sessionFromCookies(event)
 	assert.equal(session, {
 		id: '74758948-0f30-4388-baaf-1279bbe5ff0b',
 		email: 'jane@example.com',
 		role: 'authenticated'
+	})
+})
+
+HelperSuite('Should exclude cookies from request', (context) => {
+	let event = { request: { headers: new Headers({}) }, locals: {} }
+	let session = sessionFromCookies(event)
+	assert.equal(session, {})
+
+	const cookie = 'other=something'
+	event.request.headers = new Headers({ cookie })
+	session = sessionFromCookies(event)
+	assert.equal(session, {
+		id: '',
+		email: '',
+		role: ''
 	})
 })
 

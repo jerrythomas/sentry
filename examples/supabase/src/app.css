@@ -3,7 +3,10 @@
 html,
 body,
 #svelte {
-	@apply flex  flex-col w-full h-screen;
+	@apply flex flex-col w-full h-screen;
+}
+#svelte {
+	@apply md:items-center md:justify-center;
 }
 
 @layer base {

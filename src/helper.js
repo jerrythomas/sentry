@@ -6,14 +6,17 @@ import cookie from './cookie.js'
  * @param {*} request
  * @returns
  */
-export function sessionFromCookies(request) {
-	const cookies = cookie.parse(request.headers.cookie || '')
-	const keys = ['id', 'email', 'role']
-	let session = {}
+export function sessionFromCookies(event) {
+	let session = event.locals
+	let sessionCookie = event.request.headers.get('cookie')
+	if (sessionCookie) {
+		const cookies = cookie.parse(sessionCookie)
+		const keys = ['id', 'email', 'role']
 
-	keys.map((key) => {
-		session[key] = key in cookies ? cookies[key] : ''
-	})
+		keys.map((key) => {
+			session[key] = key in cookies ? cookies[key] : ''
+		})
+	}
 
 	return session
 }
@@ -38,10 +41,10 @@ export function cookiesFromSession(session) {
 
 	return {
 		status: 200,
-		headers: {
+		headers: new Headers({
 			'content-type': 'application/json',
 			'set-cookie': cookies
-		}
+		})
 	}
 }
 

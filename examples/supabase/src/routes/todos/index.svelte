@@ -1,164 +1,141 @@
-<script context="module">
-	import { enhance } from '$lib/form'
+<p>Hello you are logged in</p>
+<!-- <script context="module">
+	import { enhance } from '$lib/form';
 
 	// see https://kit.svelte.dev/docs#loading
-	export const load = async ({ fetch, session }) => {
-		const res = await fetch(`/data/todos?user_id=${session.id}`)
+	export const load = async ({ fetch }) => {
+		const res = await fetch('/todos.json');
 
 		if (res.ok) {
-			const result = await res.json()
+			const todos = await res.json();
+
 			return {
-				props: { session, todos: result.data }
-			}
+				props: { todos }
+			};
 		}
 
-		const { message } = await res.json()
+		const { message } = await res.json();
+
 		return {
 			error: new Error(message)
-		}
-	}
+		};
+	};
 </script>
 
 <script>
-	import { scale } from 'svelte/transition'
-	import { flip } from 'svelte/animate'
-	import { sentry } from '$config'
+	import { scale } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
 
-	export let session = {}
-	export let todos = []
+	export let todos;
 
 	async function patch(res) {
-		const todo = await res.json()
+		const todo = await res.json();
 
 		todos = todos.map((t) => {
-			if (t.id === todo.id) return todo
-			return t
-		})
+			if (t.uid === todo.uid) return todo;
+			return t;
+		});
 	}
-
-	$: user_id = $sentry.user?.id
 </script>
 
 <svelte:head>
 	<title>Todos</title>
 </svelte:head>
 
-<div class=" flex flex-col p-10 border shadow-xl rounded-md">
-	<h1 class="text-xl font-bold text-center w-full">Todos</h1>
+<div class="todos">
+	<h1>Todos</h1>
 
 	<form
-		method="post"
-		action="/data/todos?method=put"
 		class="new"
+		action="/todos.json"
+		method="post"
 		use:enhance={{
 			result: async (res, form) => {
-				const created = await res.json()
-				todos = [...todos, created]
+				const created = await res.json();
+				todos = [...todos, created];
 
-				form.reset()
+				form.reset();
 			}
 		}}
 	>
-		<input type="hidden" name="user_id" value={user_id} />
-		<input
-			class="border-1 border-skin-100"
-			name="text"
-			aria-label="Add todo"
-			placeholder="+ tap to add a todo"
-		/>
+		<input name="text" aria-label="Add todo" placeholder="+ tap to add a todo" />
 	</form>
 
-	{#each todos as todo (todo.id)}
+	{#each todos as todo (todo.uid)}
 		<div
-			class="focus-within:ring-2 outline-none focus-within:ring-secondary-400 todo"
+			class="todo"
 			class:done={todo.done}
 			transition:scale|local={{ start: 0.7 }}
 			animate:flip={{ duration: 200 }}
 		>
 			<form
-				action="/data/todos?method=post"
+				action="/todos/{todo.uid}.json?_method=PATCH"
 				method="post"
 				use:enhance={{
 					pending: (data) => {
-						todo.done = !!data.get('done')
+						todo.done = !!data.get('done');
 					},
 					result: patch
 				}}
 			>
-				<input type="hidden" name="id" value={todo.id} />
 				<input type="hidden" name="done" value={todo.done ? '' : 'true'} />
-				<button
-					class="toggle"
-					aria-label="Mark todo as {todo.done ? 'not done' : 'done'}"
-				/>
+				<button class="toggle" aria-label="Mark todo as {todo.done ? 'not done' : 'done'}" />
 			</form>
 
 			<form
 				class="text"
-				action="/data/todos?method=post"
+				action="/todos/{todo.uid}.json?_method=PATCH"
 				method="post"
 				use:enhance={{
 					result: patch
 				}}
 			>
-				<input type="hidden" name="id" value={todo.id} />
-				<input
-					aria-label="Edit todo"
-					type="text"
-					name="text"
-					value={todo.text}
-				/>
+				<input aria-label="Edit todo" type="text" name="text" value={todo.text} />
 				<button class="save" aria-label="Save todo" />
 			</form>
 
 			<form
-				action="/data/todos?method=delete"
+				action="/todos/{todo.uid}.json?_method=DELETE"
 				method="post"
 				use:enhance={{
 					pending: () => (todo.pending_delete = true),
 					result: () => {
-						todos = todos.filter((t) => t.uid !== todo.uid)
+						todos = todos.filter((t) => t.uid !== todo.uid);
 					}
 				}}
 			>
-				<input type="hidden" name="id" value={todo.id} />
-				<button
-					class="delete"
-					aria-label="Delete todo"
-					disabled={todo.pending_delete}
-				/>
+				<button class="delete" aria-label="Delete todo" disabled={todo.pending_delete} />
 			</form>
 		</div>
 	{/each}
 </div>
 
-<style lang="postcss">
-	/* .todos {
+<style>
+	.todos {
 		width: 100%;
 		max-width: var(--column-width);
 		margin: var(--column-margin-top) auto 0 auto;
 		line-height: 1;
-	} */
-
-	/* .new {
-		margin: 0 0 0.5rem 0;
-	} */
-
-	input {
-		@apply outline-none focus:border-none;
 	}
 
-	/* input:focus-visible {
+	.new {
+		margin: 0 0 0.5rem 0;
+	}
+
+	input {
+		border: 1px solid transparent;
+	}
+
+	input:focus-visible {
 		box-shadow: inset 1px 1px 6px rgba(0, 0, 0, 0.1);
 		border: 1px solid #ff3e00 !important;
 		outline: none;
-	} */
+	}
 
 	.new input {
-		font-size: 22px;
+		font-size: 28px;
 		width: 100%;
 		padding: 0.5em 1em 0.3em 1em;
-		margin: 0.5em 0;
 		box-sizing: border-box;
 		background: rgba(255, 255, 255, 0.05);
 		border-radius: 8px;
@@ -241,4 +218,4 @@
 		transition: opacity 0.2s;
 		opacity: 1;
 	}
-</style>
+</style> -->

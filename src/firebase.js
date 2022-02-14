@@ -48,12 +48,12 @@ export function adapter(config) {
 			},
 			signOut: async () => await signOut(firebaseAuth),
 			onAuthStateChange: async (cb) => {
-				console.log('auth change called', cb)
+				// console.log('auth change called', cb)
 				onAuthStateChanged(firebaseAuth, async (user) => {
 					const event = user ? 'SIGNED_IN' : 'SIGNED_OUT'
 					let userData = getUserInfo(user)
 					if (currentUser !== userData) {
-						console.log('Firebase auth changed', currentUser, userData, cb)
+						// console.log('Firebase auth changed', currentUser, userData, cb)
 						currentUser = userData
 						await cb(event, userData ? { user: userData } : null)
 					}

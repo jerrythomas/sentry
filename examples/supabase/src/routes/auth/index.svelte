@@ -1,9 +1,9 @@
 <script context="module">
 	/** @type {import('@sveltejs/kit').Load} */
-	export async function load({ page }) {
+	export async function load({ url, params }) {
 		return {
 			props: {
-				status: page.query.get('status')
+				status: url.searchParams.get('status')
 			}
 		}
 	}
@@ -14,9 +14,12 @@
 	import { providers } from '$config/providers'
 	import { sentry } from '$config'
 	import { onMount } from 'svelte'
+	import { page } from '$app/stores'
 
 	onMount(async () => {
+		console.log('login mount', $sentry)
 		await sentry.handleAuthChange()
+		// sentry.protectBrowser($page.pathname)
 	})
 
 	const messages = {

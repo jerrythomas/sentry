@@ -2,16 +2,29 @@ import fs from 'fs'
 import yaml from 'js-yaml'
 import { suite } from 'uvu'
 import * as assert from 'uvu/assert'
-import { sentry } from '../src/sentry.js'
+
 import fetchMock from 'fetch-mock'
 import { adapter } from './mock/adapter.js'
+import { Response } from './mock/response.js'
+import { Headers } from './mock/headers.js'
+
+import { sentry } from '../src/sentry.js'
 
 const VALID_EMAIL = 'john@doe@example.com'
-
 const SentrySuite = suite('Sentry wrapper for auth')
 
 SentrySuite.before(async (context) => {
 	global.window = { location: { href: '', pathname: '/' } }
+	global.window.sessionStorage = {
+		getItem(key) {
+			return context.sessionStorage[key]
+		},
+		setItem(key, value) {
+			context.sessionStorage[key] = value
+		}
+	}
+	global.Response = Response
+	global.Headers = Headers
 	try {
 		context.authProviders = yaml.load(
 			fs.readFileSync('spec/fixtures/providers.yaml', 'utf8')
@@ -20,11 +33,18 @@ SentrySuite.before(async (context) => {
 		console.error(err)
 	}
 
+	context.sessionStorage = {}
 	context.providers = [
 		{ provider: 'magic' },
 		{ provider: 'google', scopes: ['email'], params: [] }
 	]
 	context.adapter = adapter
+	context.routes = { routes: { authenticated: ['/visited'] } }
+	context.authCookie = [
+		'id=74758948-0f30-4388-baaf-1279bbe5ff0b',
+		'email=jane%40example.com',
+		'role=authenticated'
+	].join('; ')
 })
 
 SentrySuite('Should handle different providers', async (context) => {
@@ -57,9 +77,12 @@ SentrySuite('Should handle different providers', async (context) => {
 
 SentrySuite('Should handle auth change', async (context) => {
 	let count = 0
-
-	await sentry.handleAuthChange()
-
+	sentry.init({
+		adapter: context.adapter,
+		providers: context.providers,
+		routes: context.routes
+	})
+	// console.log(context.routes)
 	let unsubscribe = sentry.subscribe((data) => {
 		if (count === 1)
 			assert.equal(data.user, {
@@ -70,6 +93,7 @@ SentrySuite('Should handle auth change', async (context) => {
 		count++
 	})
 	fetchMock.mock('/auth/session', 200)
+	await sentry.handleAuthChange('/')
 	await context.adapter.authStateCallback('SIGNED_IN', {
 		user: { id: '123', email: VALID_EMAIL, role: 'authenticated' }
 	})
@@ -87,6 +111,46 @@ SentrySuite('Should handle auth change', async (context) => {
 
 	fetchMock.restore()
 })
+
+SentrySuite(
+	'Should redirect to cached route after authentication',
+	async (context) => {
+		let count = 0
+		sentry.init({
+			adapter: context.adapter,
+			providers: context.providers,
+			routes: context.routes
+		})
+		let unsubscribe = sentry.subscribe((data) => {
+			if (count === 1)
+				assert.equal(data.user, {
+					id: '123',
+					email: VALID_EMAIL,
+					role: 'authenticated'
+				})
+			count++
+		})
+		fetchMock.mock('/auth/session', 200)
+		await sentry.handleAuthChange('/visited')
+
+		await context.adapter.authStateCallback('SIGNED_IN', {
+			user: { id: '123', email: VALID_EMAIL, role: 'authenticated' }
+		})
+
+		unsubscribe()
+		assert.equal(window.location.pathname, '/visited')
+		const [endpoint, params] = fetchMock.lastCall()
+		assert.equal(endpoint, '/auth/session')
+		assert.equal(params, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			credentials: 'same-origin',
+			body: `{"event":"SIGNED_IN","session":{"user":{"id":"123","email":"${VALID_EMAIL}","role":"authenticated"}}}`
+		})
+
+		fetchMock.restore()
+	}
+)
 
 SentrySuite('Should handle sign out', async (context) => {
 	let count = 0
@@ -123,18 +187,78 @@ SentrySuite('Should handle sign out', async (context) => {
 	context.adapter.clearCalls()
 })
 
-SentrySuite('Should protect route', async (context) => {
-	// before auth
-	let result = sentry.protect('/')
-	assert.equal(result, { status: 302, headers: { location: '/auth' } })
-	result = sentry.protect('/auth')
-	assert.equal(result, {})
+SentrySuite('Should bypass routing when url is not present', () => {
+	const input = { request: { headers: new Headers({}) }, locals: {} }
+	const response = new Response('', { status: 200 })
+	const result = sentry.protect(input, response)
 
-	// after auth
-	result = sentry.protect('/auth', { role: 'authenticated' })
-	assert.equal(result, { status: 302, headers: { location: '/' } })
-	result = sentry.protect('/', { role: 'authenticated' }, { placeholder: true })
-	assert.equal(result, { placeholder: true })
+	assert.equal(result, response)
+})
+
+SentrySuite('Should redirect protected routes for auth', () => {
+	const input = {
+		request: { headers: new Headers({}) },
+		locals: {},
+		url: { pathname: '/' }
+	}
+	const response = new Response('', {
+		status: 302,
+		headers: new Headers({ location: '/auth' })
+	})
+	const result = sentry.protect(input, new Response('', { status: 200 }))
+	// console.log(result, response)
+	assert.equal(result, response)
+})
+
+SentrySuite('Should allow auth route when not authenticated', () => {
+	const input = {
+		request: { headers: new Headers({}) },
+		locals: {},
+		url: { pathname: '/auth' }
+	}
+	const response = new Response('auth content', {
+		status: 200
+	})
+
+	const result = sentry.protect(input, response)
+	assert.equal(result, response)
+})
+
+SentrySuite('Should allow protected routes when authenticated', (context) => {
+	const input = {
+		request: {
+			headers: new Headers({
+				cookie: context.authCookie
+			})
+		},
+		locals: {},
+		url: { pathname: '/' }
+	}
+	const response = new Response('some content', {
+		status: 200
+	})
+
+	const result = sentry.protect(input, response)
+	assert.equal(result, response)
+})
+
+SentrySuite('Should redirect to home when authenticated', (context) => {
+	const input = {
+		request: {
+			headers: new Headers({
+				cookie: context.authCookie
+			})
+		},
+		locals: {},
+		url: { pathname: '/' }
+	}
+
+	const response = new Response('', {
+		status: 302,
+		headers: new Headers({ location: '/' })
+	})
+	const result = sentry.protect(input, response)
+	assert.equal(result, response)
 })
 
 SentrySuite.run()

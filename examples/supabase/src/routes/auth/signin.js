@@ -1,25 +1,26 @@
 import { sentry } from '$config'
+import { getRequestBody } from '$lib/task'
+
 /**
  *
  * @param {*} request
  * @returns
  */
 /** @type {import('@sveltejs/kit').RequestHandler} */
-export async function post(request) {
+export async function post({ url, request }) {
 	let status = 'S001'
 	const { loginUrl } = sentry.routes()
+	const body = await getRequestBody(request)
 	const params = Object.assign(
-		Object.fromEntries(request.query.entries()),
-		Object.fromEntries(request.body.entries())
+		Object.fromEntries(url.searchParams.entries()),
+		body
 	)
-	const { error, params } = await sentry.handleSignIn(
-		params,
-		request.headers.origin
-	)
+	console.log(request.headers.origin, url.origin)
+	const result = await sentry.handleSignIn(params, url.origin)
 
-	if (error) {
+	if (result.error) {
 		status = 'E001'
-		console.error(error)
+		console.error(result.error)
 	}
 
 	if (
