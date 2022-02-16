@@ -9,6 +9,7 @@ import cookie from './cookie.js'
 export function sessionFromCookies(event) {
 	let session = event.locals
 	let sessionCookie = event.request.headers.get('cookie')
+
 	if (sessionCookie) {
 		const cookies = cookie.parse(sessionCookie)
 		const keys = ['id', 'email', 'role']
@@ -28,7 +29,7 @@ export function sessionFromCookies(event) {
  * @returns
  */
 export function cookiesFromSession(session) {
-	const keys = ['id', 'email', 'role']
+	const keys = ['role', 'id', 'email']
 	const user = session?.user || null
 	const cookies = keys.map((key) =>
 		cookie.serialize(key, user ? user[key] : '', {
@@ -41,10 +42,10 @@ export function cookiesFromSession(session) {
 
 	return {
 		status: 200,
-		headers: new Headers({
+		headers: {
 			'content-type': 'application/json',
-			'set-cookie': cookies
-		})
+			'Set-Cookie': cookies
+		}
 	}
 }
 

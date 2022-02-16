@@ -1,40 +1,39 @@
-<p>Hello you are logged in</p>
-<!-- <script context="module">
-	import { enhance } from '$lib/form';
+<script context="module">
+	import { enhance } from '$lib/form'
 
 	// see https://kit.svelte.dev/docs#loading
 	export const load = async ({ fetch }) => {
-		const res = await fetch('/todos.json');
+		const res = await fetch('/todos.json')
 
 		if (res.ok) {
-			const todos = await res.json();
+			const todos = await res.json()
 
 			return {
 				props: { todos }
-			};
+			}
 		}
 
-		const { message } = await res.json();
+		const { message } = await res.json()
 
 		return {
 			error: new Error(message)
-		};
-	};
+		}
+	}
 </script>
 
 <script>
-	import { scale } from 'svelte/transition';
-	import { flip } from 'svelte/animate';
+	import { scale } from 'svelte/transition'
+	import { flip } from 'svelte/animate'
 
-	export let todos;
+	export let todos
 
 	async function patch(res) {
-		const todo = await res.json();
+		const todo = await res.json()
 
 		todos = todos.map((t) => {
-			if (t.uid === todo.uid) return todo;
-			return t;
-		});
+			if (t.uid === todo.uid) return todo
+			return t
+		})
 	}
 </script>
 
@@ -51,14 +50,18 @@
 		method="post"
 		use:enhance={{
 			result: async (res, form) => {
-				const created = await res.json();
-				todos = [...todos, created];
+				const created = await res.json()
+				todos = [...todos, created]
 
-				form.reset();
+				form.reset()
 			}
 		}}
 	>
-		<input name="text" aria-label="Add todo" placeholder="+ tap to add a todo" />
+		<input
+			name="text"
+			aria-label="Add todo"
+			placeholder="+ tap to add a todo"
+		/>
 	</form>
 
 	{#each todos as todo (todo.uid)}
@@ -73,13 +76,16 @@
 				method="post"
 				use:enhance={{
 					pending: (data) => {
-						todo.done = !!data.get('done');
+						todo.done = !!data.get('done')
 					},
 					result: patch
 				}}
 			>
 				<input type="hidden" name="done" value={todo.done ? '' : 'true'} />
-				<button class="toggle" aria-label="Mark todo as {todo.done ? 'not done' : 'done'}" />
+				<button
+					class="toggle"
+					aria-label="Mark todo as {todo.done ? 'not done' : 'done'}"
+				/>
 			</form>
 
 			<form
@@ -90,7 +96,12 @@
 					result: patch
 				}}
 			>
-				<input aria-label="Edit todo" type="text" name="text" value={todo.text} />
+				<input
+					aria-label="Edit todo"
+					type="text"
+					name="text"
+					value={todo.text}
+				/>
 				<button class="save" aria-label="Save todo" />
 			</form>
 
@@ -100,11 +111,15 @@
 				use:enhance={{
 					pending: () => (todo.pending_delete = true),
 					result: () => {
-						todos = todos.filter((t) => t.uid !== todo.uid);
+						todos = todos.filter((t) => t.uid !== todo.uid)
 					}
 				}}
 			>
-				<button class="delete" aria-label="Delete todo" disabled={todo.pending_delete} />
+				<button
+					class="delete"
+					aria-label="Delete todo"
+					disabled={todo.pending_delete}
+				/>
 			</form>
 		</div>
 	{/each}
@@ -218,4 +233,4 @@
 		transition: opacity 0.2s;
 		opacity: 1;
 	}
-</style> -->
+</style>

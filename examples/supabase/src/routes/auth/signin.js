@@ -15,7 +15,7 @@ export async function post({ url, request }) {
 		Object.fromEntries(url.searchParams.entries()),
 		body
 	)
-	console.log(request.headers.origin, url.origin)
+
 	const result = await sentry.handleSignIn(params, url.origin)
 
 	if (result.error) {

@@ -1,16 +1,21 @@
+<script context="module">
+	import { sentry } from '$config'
+
+	/** @type {import('@sveltejs/kit').Load} */
+	export async function load({ url, session }) {
+		return sentry.redirectProtectedRoute(url, session)
+	}
+</script>
+
 <script>
 	import 'virtual:windi.css'
 	import '../app.css'
 
 	import { page } from '$app/stores'
-	import Header from '$lib/header/Header.svelte'
-	import MenuIcon from '$lib/icons/Menu.svelte'
 	import LoginIcon from '$lib/icons/Login.svelte'
 	import LogoutIcon from '$lib/icons/Logout.svelte'
 	import TodoIcon from '$lib/icons/Todo.svelte'
 	import AboutIcon from '$lib/icons/About.svelte'
-
-	import { sentry } from '$config'
 	import { onMount } from 'svelte'
 
 	onMount(async () => {

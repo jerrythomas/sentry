@@ -1,6 +1,5 @@
 import { writable } from 'svelte/store'
 import { Router } from './router.js'
-import { sessionFromCookies } from './helper.js'
 // import { hasAuthParams } from './helper.js'
 
 export let isAuthorizing = writable(false)
@@ -14,7 +13,7 @@ function createSentry() {
 	let adapter
 	let router
 	let providers
-	let isLoggedIn = false
+	// let isLoggedIn = false
 
 	function init(config) {
 		router = new Router(config.routes)
@@ -67,42 +66,33 @@ function createSentry() {
 	async function handleSignOut() {
 		await adapter.auth.signOut()
 		await updateSession()
+		router.authRoles = ''
 		window.location.pathname = router.login
 	}
 
-	function protectBrowser(route) {
-		const location = router.redirect(route)
-		console.log(router.authRoles, location)
-		// if (route !== location) window.location.pathname = location
-		// return { status: 302, redirect: location }
+	function protectServerRoute(event, response) {
+		if (!event.url) return response
+		const { status, redirect } = redirectProtectedRoute(event.url, event.locals)
+
+		if (!status) return response
+
+		return new Response('', {
+			status,
+			headers: new Headers({ location: redirect })
+		})
 	}
 
-	function protect(event, response) {
-		const session = sessionFromCookies(event)
-		// if (session !== event.locals)
-		event.locals = session
-		if (!event.url) return response
-
-		const route = event.url.pathname
+	function redirectProtectedRoute(url, session) {
 		router.authRoles = session.role
-		const location = router.redirect(route)
-
-		console.log('Redirection', route, session.role, location)
-
-		if (location !== route) {
-			return new Response('', {
-				status: 302,
-				headers: new Headers({ location })
-			})
-		}
-		return response
+		const location = router.redirect(url.pathname)
+		if (location !== url.pathname) return { status: 302, redirect: location }
+		return {}
 	}
 
 	async function handleAuthChange(path = '/') {
 		// isAuthorizing.set(true)
 		if (path !== router.login) {
 			window.sessionStorage.setItem('path', path)
-			// console.log('cached current path', path)
 		}
 		// isAuthorizing.set(sess)
 		adapter.auth.onAuthStateChange(async (event, session) => {
@@ -144,8 +134,8 @@ function createSentry() {
 		subscribe,
 		init,
 		routes,
-		protect,
-		protectBrowser,
+		protectServerRoute,
+		redirectProtectedRoute,
 		handleAuthChange,
 		handleSignIn,
 		handleSignOut
