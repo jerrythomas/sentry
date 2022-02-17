@@ -47,7 +47,7 @@
   },
   "homepage": "https://github.com/jerrythomas/sentry#readme",
   "devDependencies": {
-    "@supabase/supabase-js": "^1.30.0",
+    "@supabase/supabase-js": "^1.30.3",
     "auto-changelog": "^2.4.0",
     "autoprefixer": "^10.4.2",
     "c8": "^7.11.0",

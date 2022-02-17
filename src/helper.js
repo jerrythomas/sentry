@@ -29,7 +29,7 @@ export function sessionFromCookies(event) {
  * @returns
  */
 export function cookiesFromSession(session) {
-	const keys = ['role', 'id', 'email']
+	const keys = ['id', 'email', 'role']
 	const user = session?.user || null
 	const cookies = keys.map((key) =>
 		cookie.serialize(key, user ? user[key] : '', {
@@ -44,7 +44,7 @@ export function cookiesFromSession(session) {
 		status: 200,
 		headers: {
 			'content-type': 'application/json',
-			'Set-Cookie': cookies
+			'set-cookie': cookies
 		}
 	}
 }

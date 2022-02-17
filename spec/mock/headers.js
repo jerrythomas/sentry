@@ -1,13 +1,13 @@
 export class Headers {
-	location
-	#cookie
+	#data = {}
 
 	constructor(headers) {
-		if (headers.location) this.location = headers.location
-		if (headers.cookie) this.#cookie = headers.cookie
+		if (headers.location) this.#data['location'] = headers.location
+		if (headers.cookie) this.#data['cookie'] = headers.cookie
 	}
 
 	get(key) {
-		if (key === 'cookie') return this.#cookie
+		if (key in this.#data) return this.#data[key]
+		return null
 	}
 }
