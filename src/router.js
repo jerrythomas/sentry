@@ -121,7 +121,6 @@ export class Router {
 					route.startsWith(this.allowedRoutes[i] + '/')
 			}
 		}
-
 		return isAllowed ? route : this.#isAuthenticated ? this.home : this.login
 	}
 }

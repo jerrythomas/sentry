@@ -1,59 +1,32 @@
-<script context="module">
-	export const prerender = true;
-</script>
-
-<script>
-	import Counter from '$lib/Counter.svelte';
-</script>
-
-<svelte:head>
-	<title>Home</title>
-</svelte:head>
-
-<section>
-	<h1>
-		<div class="welcome">
-			<picture>
-				<source srcset="svelte-welcome.webp" type="image/webp" />
-				<img src="svelte-welcome.png" alt="Welcome" />
-			</picture>
-		</div>
-
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/index.svelte</strong>
-	</h2>
-
-	<Counter />
-</section>
-
-<style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 1;
-	}
-
-	h1 {
-		width: 100%;
-	}
-
-	.welcome {
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
-	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
-	}
-</style>
+<content
+	class="flex flex-col flex-grow transform transition duration-200 ease-in-out bg-gray-100"
+>
+	<prose class="prose prose-md px-6 py-4">
+		<p class="mt-2">
+			This demo extends the standard svelte-kit <b>todo</b> app by adding authentication
+			and route protection using Sentry. Sentry supports public and protected routes.
+		</p>
+		<ul class="list-disc p-4">
+			<li>A <b>public</b> route is accessible to everyone.</li>
+			<li>
+				A <b>protected</b> is only accessible to logged in users with a specifc role.
+				These routes can be configured to be different for each role.
+			</li>
+		</ul>
+		<p class="mt-2">Routes in this demo</p>
+		<ul class="list-disc p-4">
+			<li>
+				User can log in using the login url. If already logged in user will be
+				redirected to the default home page
+			</li>
+			<li>
+				Logged in users can log out. If user is not logged in, he/she will be
+				redirected to login page.
+			</li>
+			<li>
+				Todo is a protected link, which is only accessible when user is logged
+				in. Otherwise user will be redirected to login page
+			</li>
+		</ul>
+	</prose>
+</content>

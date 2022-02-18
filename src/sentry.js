@@ -1,19 +1,19 @@
 import { writable } from 'svelte/store'
 import { Router } from './router.js'
-import { hasAuthParams } from './helper.js'
+// import { hasAuthParams } from './helper.js'
 
-export let isAuthChanging = writable(false)
+export let isAuthorizing = writable(false)
 
 function createSentry() {
 	const { subscribe, set } = writable({
 		user: {},
-		isAuthChanging: false,
 		token: null
 	})
 
 	let adapter
 	let router
 	let providers
+	// let isLoggedIn = false
 
 	function init(config) {
 		router = new Router(config.routes)
@@ -32,6 +32,17 @@ function createSentry() {
 		set({ user: adapter.auth.user(), token: null })
 	}
 
+	/**
+	 * @typedef {AuthParams}
+	 * @property {string} [email]
+	 * @property {string} [provider]
+	 */
+	/**
+	 *
+	 * @param {AuthParams} params
+	 * @param {string} baseUrl
+	 * @returns
+	 */
 	async function handleSignIn(params, baseUrl) {
 		if (!(params.provider in providers)) {
 			return { error: 'Provider has not been configured.', params }
@@ -40,6 +51,8 @@ function createSentry() {
 			params.provider === 'magic'
 				? { email: params.email }
 				: { provider: params.provider }
+
+		// console.log('handleSignIn', params, credentials)
 		const options = {
 			redirectTo: baseUrl + router.login,
 			scopes: providers[params.provider].scopes.join(' '),
@@ -53,23 +66,41 @@ function createSentry() {
 	async function handleSignOut() {
 		await adapter.auth.signOut()
 		await updateSession()
+		router.authRoles = ''
 		window.location.pathname = router.login
 	}
 
-	function protect(route, session, response) {
-		router.authRoles = session?.role
-		const redirect = router.redirect(route)
+	function protectServerRoute(event, response) {
+		if (!event.url) return response
+		const { status, redirect } = redirectProtectedRoute(event.url, event.locals)
 
-		return redirect === route
-			? response || {}
-			: { status: 302, headers: { location: redirect } }
+		if (!status) return response
+
+		return new Response('', {
+			status,
+			headers: new Headers({ location: redirect })
+		})
 	}
 
-	async function handleAuthChange() {
-		isAuthChanging.set(hasAuthParams(window.location))
+	function redirectProtectedRoute(url, session) {
+		router.authRoles = session.role
+		const location = router.redirect(url.pathname)
+		if (location !== url.pathname) return { status: 302, redirect: location }
+		return {}
+	}
+
+	async function handleAuthChange(path = '/') {
+		// isAuthorizing.set(true)
+		if (path !== router.login) {
+			window.sessionStorage.setItem('path', path)
+		}
+		// isAuthorizing.set(sess)
 		adapter.auth.onAuthStateChange(async (event, session) => {
-			isAuthChanging.set(true)
+			// console.log('Auth change event fired')
+			isAuthorizing.set(true)
+			// console.log('In auth change cb')
 			await updateSession(event, session)
+			// console.log('session updated')
 			if (session) {
 				set({ user: session.user })
 				router.authRoles = session.user.role
@@ -77,9 +108,9 @@ function createSentry() {
 				set({ user: {} })
 				router.authRoles = ''
 			}
-			const detour = router.redirect(window.location.pathname)
+			isAuthorizing.set(false)
+			const detour = router.redirect(window.sessionStorage.getItem('path'))
 			if (detour !== window.location.pathname) window.location.pathname = detour
-			isAuthChanging.set(false)
 		})
 	}
 
@@ -103,7 +134,8 @@ function createSentry() {
 		subscribe,
 		init,
 		routes,
-		protect,
+		protectServerRoute,
+		redirectProtectedRoute,
 		handleAuthChange,
 		handleSignIn,
 		handleSignOut

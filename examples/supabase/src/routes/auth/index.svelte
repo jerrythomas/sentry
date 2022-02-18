@@ -1,19 +1,22 @@
 <script context="module">
 	/** @type {import('@sveltejs/kit').Load} */
-	export async function load({ page }) {
-		return {
+	export async function load({ url }) {
+		const props = {
 			props: {
-				status: page.query.get('status')
+				status: url.searchParams.get('status')
 			}
 		}
+
+		return props
 	}
 </script>
 
 <script>
 	import { SentryAuth } from '@jerrythomas/sentry'
 	import { providers } from '$config/providers'
-	import { sentry } from '$config'
 	import { onMount } from 'svelte'
+	import { page } from '$app/stores'
+	import { sentry } from '$config'
 
 	onMount(async () => {
 		await sentry.handleAuthChange()
