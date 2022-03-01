@@ -1,3 +1,6 @@
+<svelte:head>
+	<title>About</title>
+</svelte:head>
 <content
 	class="flex flex-col flex-grow transform transition duration-200 ease-in-out bg-gray-100"
 >

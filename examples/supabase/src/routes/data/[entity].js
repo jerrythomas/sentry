@@ -24,7 +24,7 @@ export async function get({ params, request, url }) {
 	// console.log('get', entity, data)
 	return {
 		status: 200,
-		body: { data }
+		body: data
 	}
 }
 
@@ -70,7 +70,7 @@ export async function put({ params, request }) {
 
 	return {
 		status: 200,
-		body: { data }
+		body: data
 	}
 }
 
@@ -86,6 +86,6 @@ export async function del({ params, request }) {
 	if (error) return { status, body: error }
 	return {
 		status: 200,
-		body: { data }
+		body: data
 	}
 }

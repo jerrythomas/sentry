@@ -26,11 +26,17 @@
 	>
 		<input type="hidden" name="provider" value={provider} />
 		{#if provider === 'magic'}
-			<IconInput type="email" name="email" placeholder={label}>
+			<IconInput
+				id="magic"
+				type="email"
+				name="email"
+				placeholder={label}
+				tabindex="0"
+			>
 				<Icon icon={icons[provider]} slot="icon" />
 			</IconInput>
 		{:else}
-			<IconButton type="submit" label={title} class={provider}>
+			<IconButton type="submit" label={title} class={provider} tabindex="0">
 				<Icon icon={icons[provider]} slot="icon" />
 			</IconButton>
 		{/if}

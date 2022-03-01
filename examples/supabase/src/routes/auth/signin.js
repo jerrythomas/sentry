@@ -20,7 +20,7 @@ export async function post({ url, request }) {
 
 	if (result.error) {
 		status = 'E001'
-		console.error(result.error)
+		console.error(params, result.error)
 	}
 
 	if (
