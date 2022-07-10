@@ -25,13 +25,10 @@ SentrySuite.before(async (context) => {
 	}
 	global.Response = Response
 	global.Headers = Headers
-	try {
-		context.authProviders = yaml.load(
-			fs.readFileSync('spec/fixtures/providers.yaml', 'utf8')
-		)
-	} catch (err) {
-		console.error(err)
-	}
+
+	context.authProviders = yaml.load(
+		fs.readFileSync('spec/fixtures/providers.yaml', 'utf8')
+	)
 
 	context.sessionStorage = {}
 	context.providers = [

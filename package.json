@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "test": "uvu spec",
-    "coverage": "c8 --include=src uvu spec ",
+    "coverage": "c8 uvu spec ",
     "coverage:lcov": "c8 --reporter=lcov --include=src uvu spec ",
     "release": "release-it --preRelease=beta",
     "lint": "eslint src spec"
@@ -47,23 +47,23 @@
   },
   "homepage": "https://github.com/jerrythomas/sentry#readme",
   "devDependencies": {
-    "@supabase/supabase-js": "^1.30.7",
+    "@supabase/supabase-js": "^1.33.3",
     "auto-changelog": "^2.4.0",
-    "autoprefixer": "^10.4.2",
+    "autoprefixer": "^10.4.4",
     "c8": "^7.11.0",
     "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.4.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^3.4.1",
     "fetch-mock": "^9.11.0",
-    "firebase": "^9.6.7",
+    "firebase": "^9.6.10",
     "js-yaml": "^4.1.0",
-    "postcss": "^8.4.7",
-    "prettier": "^2.5.1",
-    "release-it": "^14.12.5",
+    "postcss": "^8.4.12",
+    "prettier": "^2.6.2",
+    "release-it": "^15.1.1",
     "supabase": "^0.5.0",
-    "svelte": "^3.46.4",
+    "svelte": "^3.46.6",
     "uvu": "^0.5.3",
-    "windicss": "^3.5.0"
+    "windicss": "^3.5.1"
   },
   "publishConfig": {
     "access": "public"

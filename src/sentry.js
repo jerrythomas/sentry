@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
 import { Router } from './router.js'
-// import { hasAuthParams } from './helper.js'
+import cookie from './cookie.js'
 
 export let isAuthorizing = writable(false)
 
@@ -13,7 +13,6 @@ function createSentry() {
 	let adapter
 	let router
 	let providers
-	// let isLoggedIn = false
 
 	function init(config) {
 		router = new Router(config.routes)
@@ -52,7 +51,6 @@ function createSentry() {
 				? { email: params.email }
 				: { provider: params.provider }
 
-		// console.log('handleSignIn', params, credentials)
 		const options = {
 			redirectTo: baseUrl + router.login,
 			scopes: providers[params.provider].scopes.join(' '),
@@ -90,17 +88,13 @@ function createSentry() {
 	}
 
 	async function handleAuthChange(path = '/') {
-		// isAuthorizing.set(true)
 		if (path !== router.login) {
 			window.sessionStorage.setItem('path', path)
 		}
-		// isAuthorizing.set(sess)
 		adapter.auth.onAuthStateChange(async (event, session) => {
-			// console.log('Auth change event fired')
 			isAuthorizing.set(true)
-			// console.log('In auth change cb')
 			await updateSession(event, session)
-			// console.log('session updated')
+
 			if (session) {
 				set({ user: session.user })
 				router.authRoles = session.user.role
@@ -123,6 +117,19 @@ function createSentry() {
 		})
 	}
 
+	async function getUserFromCookie(event, cookieName = 'sb:token') {
+		let sessionCookie = event.request.headers.get('cookie')
+		if (sessionCookie) {
+			const cookies = cookie.parse(sessionCookie)
+			// console.log(cookies)
+			const { user, error } = await adapter.auth.api.getUser(
+				cookies[cookieName]
+			)
+			if (!error) return user
+		}
+		return {}
+	}
+
 	function routes() {
 		return {
 			authUrl: router.authUrl,
@@ -138,7 +145,8 @@ function createSentry() {
 		redirectProtectedRoute,
 		handleAuthChange,
 		handleSignIn,
-		handleSignOut
+		handleSignOut,
+		getUserFromCookie
 	}
 }
 

@@ -5,7 +5,7 @@ export function getSubscribedData(store) {
 		result = data
 		received = true
 	})
-	while (!received) {}
+	// while (!received) {}
 	unsubscribe()
 	return result
 }

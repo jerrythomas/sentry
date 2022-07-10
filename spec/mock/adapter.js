@@ -13,8 +13,6 @@ export const adapter = {
 			_calls.push({ function: 'signIn', credentials, options })
 			if ('email' in credentials && credentials.email === ERROR_EMAIL) {
 				return { error: 'Rate limit error' }
-			} else if (credentials.provider === 'unknown') {
-				return { error: 'Unknown provider' }
 			} else {
 				return { error: null }
 			}

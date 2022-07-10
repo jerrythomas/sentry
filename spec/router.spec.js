@@ -7,19 +7,13 @@ import yaml from 'js-yaml'
 const RouterSuite = suite('Router functions')
 
 RouterSuite.before(async (context) => {
-	try {
-		context.config = yaml.load(
-			fs.readFileSync('spec/fixtures/config.yaml', 'utf8')
-		)
-		context.roles = yaml.load(
-			fs.readFileSync('spec/fixtures/roles.yaml', 'utf8')
-		)
-		context.redirect = yaml.load(
-			fs.readFileSync('spec/fixtures/redirect.yaml', 'utf8')
-		)
-	} catch (err) {
-		console.error(err)
-	}
+	context.config = yaml.load(
+		fs.readFileSync('spec/fixtures/config.yaml', 'utf8')
+	)
+	context.roles = yaml.load(fs.readFileSync('spec/fixtures/roles.yaml', 'utf8'))
+	context.redirect = yaml.load(
+		fs.readFileSync('spec/fixtures/redirect.yaml', 'utf8')
+	)
 })
 
 RouterSuite('Should handle different options', (context) => {

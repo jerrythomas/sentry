@@ -69,9 +69,9 @@ function getUserInfo(data) {
 	if (!data) return data
 
 	let user = {
+		role: 'authenticated',
 		...data,
 		id: data.uid,
-		role: 'authenticated',
 		name: data.displayName
 	}
 
